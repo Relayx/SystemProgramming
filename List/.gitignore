@@ -1,0 +1,7 @@
+/.vscode
+/Stack
+
+*.o
+*.exe
+*.gch
+main.c
