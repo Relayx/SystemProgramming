@@ -22,11 +22,11 @@ typedef struct _SampleStruct
 } SampleStruct;
 
 #define STACK_TYPE SampleStruct
-#include "../includes/stack.h"
+#include <stack.h>
 #undef STACK_TYPE
 
 #define STACK_TYPE int
-#include "../includes/stack.h"
+#include <stack.h>
 #undef STACK_TYPE
 
 typedef struct _TortureChamber
