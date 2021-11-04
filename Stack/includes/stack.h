@@ -310,7 +310,7 @@ error_t TEMPLATE(_StackDump, STACK_TYPE)(STACK* stack, StackInfo info, error_t e
 
     printf("Stack<%s%s%s>[%s%p%s] \"%s%s%s\" at function: %s%s%s at file: %s%s(%zu)%s\n",
            YELLOW, info.type, RESET, BLUE, stack, RESET, YELLOW, info.varName, RESET, YELLOW,
-           info.function, RESET, YELLOW, info.function, info.line, RESET);
+           info.function, RESET, YELLOW, info.file, info.line, RESET);
 
     printf("Status: ");
 
