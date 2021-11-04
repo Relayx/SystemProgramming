@@ -2,7 +2,7 @@
 
 #define STACK_CANARY_PROTECT
 #define STACK_HASH_PROTECT
-//#define STACK_DUMPING
+// #define STACK_DUMPING
 
 const char* const RESET ="\033[0m";
 const char* const RED ="\033[1;31m";
@@ -120,7 +120,7 @@ int NullPointerReferencesTest()
 int OutOfMemoryTest()
 {
     Stack_int stack = {0};
-    error_t error = StackCtor(int, &stack, UINT32_MAX / 8, PrintInt);
+    error_t error = StackCtor(int, &stack, (size_t)(-1) / 8, PrintInt);
 
     return (error & (1 << OUT_OF_MEMORY));
 }

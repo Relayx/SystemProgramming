@@ -323,15 +323,15 @@ error_t TEMPLATE(_StackDump, STACK_TYPE)(STACK* stack, StackInfo info, error_t e
         int errorsNum = 0;
 
         for (unsigned int i = 1; i < ERROR_ENUM_SIZE; ++i)
-            if (error >> i & (error_t)1) ++errorsNum;
+            if (error & (1u << i)) ++errorsNum;
 
         printf("%sErrors(%d)%s:\n", RED, errorsNum, RESET);
 
         for (unsigned int i = 1; i < ERROR_ENUM_SIZE; ++i)
         {
-            if (error >> i & (error_t)1)
+            if (error & (1u << i))
                 printf("%s%s <<- ERROR_CODE(%d)%s\n", RED, ERROR_INFO[i], i, RESET);
-            if (error >> NULL_REFERENCE & (error_t)1) return error;
+            if (error & (1u << NULL_REFERENCE)) return error;
         }
     }
     
@@ -341,7 +341,7 @@ error_t TEMPLATE(_StackDump, STACK_TYPE)(STACK* stack, StackInfo info, error_t e
         YELLOW, RESET, stack->size, YELLOW, RESET,
         stack->capacity, YELLOW, RESET, BLUE, stack->data, RESET);
 
-    if (error >> NULL_REFERENCE_DATA & (error_t)1)
+    if (error & (1u << NULL_REFERENCE_DATA))
     {
         printf("}\n");
         return error;
