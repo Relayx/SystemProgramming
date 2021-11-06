@@ -11,11 +11,19 @@
 
 void PrintSizeT(size_t s) { printf("%zu", s); }
 
+#define NEXT(i) list->nodes[i].next
+#define PREV(i) list->nodes[i].prev
+
+typedef struct _Node
+{
+    int data; // Th
+    size_t next;
+    size_t prev;
+} Node;
+
 typedef struct _List
 {
-    int* data;
-    size_t* next;
-    size_t* prev;
+    Node* nodes;
 
     size_t head;
     size_t tail;
@@ -23,80 +31,95 @@ typedef struct _List
     size_t capacity;
     size_t size;
 
-    Stack_size_t* free;
+    Stack_size_t* freeNodes;
 } List;
 
-void ListCtor(List* list, size_t capacity)
+void ListCtor(List* list, size_t capacity) //Th
 {
     list->capacity = capacity;
     list->size = 0;
 
-    list->data = (int*) calloc(list->capacity + 1, sizeof(int));
-    
-    list->next = (size_t*) calloc(list->capacity + 1, sizeof(size_t));
-    list->prev = (size_t*) calloc(list->capacity + 1, sizeof(size_t));
+    list->nodes = (Node*) calloc(list->capacity + 1, sizeof(Node)); //th
 
-    list->free = (Stack_size_t*) calloc(1, sizeof(Stack_size_t));
-    StackCtor(size_t, list->free, capacity, PrintSizeT);
+    list->freeNodes = (Stack_size_t*) calloc(1, sizeof(Stack_size_t));
+    StackCtor(size_t, list->freeNodes, capacity, PrintSizeT);
 
     for (size_t i = capacity + 1; i > 0; --i)
-        StackPush(size_t, list->free, i);
+        StackPush(size_t, list->freeNodes, i);
 
-    list->size = 0;
     list->head = 0;
     list->tail = 0;
 }
 
-size_t ListPushBack(List* list, int value)
+int ListIsEmpty(List* list) //Th
+{
+    return (list->size == 0);
+}
+
+size_t ListPushBack(List* list, int value) //Th
 {
     size_t freeIndex = 0;
-    StackPop(size_t, list->free, &freeIndex);
+    StackPop(size_t, list->freeNodes, &freeIndex);
 
-    list->data[freeIndex] = value;
+    // Insert current node
+    list->nodes[freeIndex].data = value;
+    list->nodes[freeIndex].next = 0;
+    list->nodes[freeIndex].prev = list->tail;
 
-    if (list->tail != 0)
-        list->next[list->tail] = freeIndex;
+    // Update previos node
+    if (!ListIsEmpty(list))
+        list->nodes[list->tail].next = freeIndex;
 
-    list->next[freeIndex] = 0;
-    list->prev[freeIndex] = list->tail;
-
-    if (list->head == 0)
+    // Update tail and head
+    if (ListIsEmpty(list))
         list->head = freeIndex;
-
     list->tail = freeIndex;
+
+    ++list->size;
 
     return freeIndex;
 }
 
-void ListPopBack(List* list, int* out)
+void ListPopBack(List* list, int* out) //th
 {
     size_t currentIndex = list->tail;
 
-    *out = list->data[currentIndex];
+    *out = list->nodes[currentIndex].data;
 
-    list->tail = list->prev[currentIndex];
-    list->next[list->tail] = 0;
+    // Update tail
+    list->tail = list->nodes[currentIndex].prev;
 
-    StackPush(size_t, list->free, currentIndex);
+    // Update previos node
+    list->nodes[list->tail].next = 0;
+
+    StackPush(size_t, list->freeNodes, currentIndex);
+
+    --list->size;
+
+    // Fill free element with poison
+    // Update head???
 }
 
 size_t ListPushFront(List* list, int value)
 {
     size_t freeIndex = 0;
-    StackPop(size_t, list->free, &freeIndex);
+    StackPop(size_t, list->freeNodes, &freeIndex);
 
-    list->data[freeIndex] = value;
+    // Insert current node
+    list->nodes[freeIndex].data = value;
+    list->nodes[freeIndex].next = list->head;
+    list->nodes[freeIndex].prev = 0;
+ 
+    // Update next node
+    if (!ListIsEmpty(list))
+        list->nodes[list->head].prev = freeIndex;
 
-    // This node changes
-    list->next[freeIndex] = list->head;
-    list->prev[freeIndex] = 0;
-
-    // Head node changes
-    list->prev[list->head] = freeIndex;
-
-    list->head = freeIndex;
-    if (list->tail == 0)
+    // Update tail and head
+    if (ListIsEmpty(list))
         list->tail = freeIndex;
+    list->head = freeIndex;
+
+    ++list->size;
 
     return freeIndex;
 }
@@ -105,38 +128,50 @@ void ListPopFront(List* list, int* out)
 {
     size_t currentIndex = list->head;
 
-    *out = list->data[currentIndex];
+    *out = list->nodes[currentIndex].data;
 
-    list->head = list->next[currentIndex];
-    list->prev[list->head] = 0;
+    // Update head
+    list->head = list->nodes[currentIndex].next;
 
-    StackPush(size_t, list->free, currentIndex);
+    // Update next node
+    list->nodes[list->head].prev = 0;
+
+    StackPush(size_t, list->freeNodes, currentIndex);
+
+    --list->size;
+
+    // Fill free element with poison
+    // Update head???
 }
 
 size_t ListInsert(List* list, size_t index, int value)
 {
     size_t freeIndex = 0;
-    StackPop(size_t, list->free, &freeIndex);
+    StackPop(size_t, list->freeNodes, &freeIndex);
 
-    list->data[freeIndex] = value;
+    list->nodes[freeIndex].data = value;
     
-    list->next[freeIndex] = list->next[index];
-    list->prev[freeIndex] = index;
+    list->nodes[freeIndex].next = list->nodes[index].next;
+    list->nodes[freeIndex].prev = index;
 
-    list->prev[list->next[index]] = freeIndex;
-    list->next[index] = freeIndex;
+    list->nodes[list->nodes[index].next].prev = freeIndex;
+    list->nodes[index].next = freeIndex;
+
+    ++list->size;
 
     return freeIndex;
 }
 
 void ListDelete(List* list, size_t index, int* out)
 {
-    *out = list->data[index];
+    *out = list->nodes[index].data;
     
-    list->next[list->prev[index]] = list->next[index];
-    list->prev[list->next[index]] = list->prev[index];
+    list->nodes[list->nodes[index].prev].next = list->nodes[index].next;
+    list->nodes[list->nodes[index].next].prev = list->nodes[index].prev;
 
-    StackPush(size_t, list->free, index);
+    StackPush(size_t, list->freeNodes, index);
+
+    --list->size;
 }
 
 int ListSize(List* list)
@@ -149,6 +184,6 @@ void ListDump(List* list, size_t index)
     if (index == 0)
         return;
 
-    printf("%zu\n", list->data[index]);
-    ListDump(list, list->next[index]);
+    printf("%zu next: %zu, prev: %zu\n", list->nodes[index].data, list->nodes[index].next, list->nodes[index].prev);
+    ListDump(list, NEXT(index));
 }

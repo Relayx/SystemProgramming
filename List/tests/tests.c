@@ -50,6 +50,8 @@ int WithEmptyTest()
     ListPopBack(&list, &temp);
     ListPopBack(&list, &temp);
 
+    ListDump(&list, list.head);
+
     ListPushBack(&list, 5);
     ListPopFront(&list, &temp);
 
