@@ -1,3 +1,6 @@
+
+#ifdef LIST_TYPE
+
 #include <string.h>
 #include <malloc.h>
 
@@ -11,19 +14,26 @@
 
 void PrintSizeT(size_t s) { printf("%zu", s); }
 
+// Template defines
+#define CAT(X,Y) X ## _ ## Y
+#define TEMPLATE(X,Y) CAT(X,Y)
+
 #define NEXT(i) list->nodes[i].next
 #define PREV(i) list->nodes[i].prev
+#define DATA(i) list->nodes[i].data
 
-typedef struct _Node
+#define NODE TEMPLATE(Node, LIST_TYPE)
+typedef struct TEMPLATE(_Node, LIST_TYPE)
 {
-    int data; // Th
+    LIST_TYPE data;
     size_t next;
     size_t prev;
-} Node;
+} NODE;
 
-typedef struct _List
+#define LIST TEMPLATE(List, LIST_TYPE)
+typedef struct TEMPLATE(_List, LIST_TYPE)
 {
-    Node* nodes;
+    NODE* nodes;
 
     size_t head;
     size_t tail;
@@ -32,14 +42,48 @@ typedef struct _List
     size_t size;
 
     Stack_size_t* freeNodes;
-} List;
+} LIST;
 
-void ListCtor(List* list, size_t capacity) //Th
+
+
+#define ListIsEmpty(TYPE, LIST) \
+    TEMPLATE(_ListIsEmpty, TYPE)(LIST)
+
+#define ListCtor(TYPE, LIST, CAPACITY) \
+    TEMPLATE(_ListCtor, TYPE)(LIST, CAPACITY)
+
+#define ListDtor(TYPE, LIST) \
+    TEMPLATE(_ListDtor, TYPE)(LIST)
+
+#define ListPushBack(TYPE, LIST, VALUE) \
+    TEMPLATE(_ListPushBack, TYPE)(LIST, VALUE)
+
+#define ListPushFront(TYPE, LIST, VALUE) \
+    TEMPLATE(_ListPushFront, TYPE)(LIST, VALUE)
+
+#define ListPopBack(TYPE, LIST, OUT) \
+    TEMPLATE(_ListPopBack, TYPE)(LIST, OUT)
+
+#define ListPopFront(TYPE, LIST, OUT) \
+    TEMPLATE(_ListPopFront, TYPE)(LIST, OUT)
+
+#define ListInsert(TYPE, LIST, INDEX, VALUE) \
+    TEMPLATE(_ListInsert, TYPE)(LIST, INDEX, VALUE)
+
+#define ListDelete(TYPE, LIST, INDEX, OUT) \
+    TEMPLATE(_ListDelete, TYPE)(LIST, INDEX, OUT)
+
+#define ListDump(TYPE, LIST, START) \
+    TEMPLATE(_ListDump, TYPE)(LIST, START)
+
+
+
+void TEMPLATE(_ListCtor, LIST_TYPE)(LIST* list, size_t capacity)
 {
     list->capacity = capacity;
     list->size = 0;
 
-    list->nodes = (Node*) calloc(list->capacity + 1, sizeof(Node)); //th
+    list->nodes = (NODE*) calloc(list->capacity + 1, sizeof(NODE));
 
     list->freeNodes = (Stack_size_t*) calloc(1, sizeof(Stack_size_t));
     StackCtor(size_t, list->freeNodes, capacity, PrintSizeT);
@@ -51,27 +95,55 @@ void ListCtor(List* list, size_t capacity) //Th
     list->tail = 0;
 }
 
-int ListIsEmpty(List* list) //Th
+void TEMPLATE(_ListDtor, LIST_TYPE)(LIST* list)
+{
+    memset(list->nodes, '\0', list->capacity * sizeof(NODE));
+    free(list->nodes);
+    StackDtor(size_t, list->freeNodes);
+
+    list->capacity = 0;
+    list->size = 0;
+
+    list->head = 0;
+    list->tail = 0;
+}
+
+void TEMPLATE(_ListResize, LIST_TYPE)(LIST* list, size_t capacity)
+{
+    list->capacity = capacity + 1;
+    NODE* memory = (NODE*) realloc(list->nodes, list->capacity * sizeof(NODE));
+    if (memory == NULL) return;
+    list->nodes = memory;
+
+    for (size_t i = list->size; i < list->capacity; ++i)
+        StackPush(size_t, list->freeNodes, i);
+}
+
+int TEMPLATE(_ListIsEmpty, LIST_TYPE)(LIST* list)
 {
     return (list->size == 0);
 }
 
-size_t ListPushBack(List* list, int value) //Th
+size_t TEMPLATE(_ListPushBack, LIST_TYPE)(LIST* list, int value)
 {
+
+    if (list->size == list->capacity - 1)
+        TEMPLATE(_ListResize, LIST_TYPE)(list, (list->capacity - 1) * 2);
+
     size_t freeIndex = 0;
     StackPop(size_t, list->freeNodes, &freeIndex);
 
     // Insert current node
-    list->nodes[freeIndex].data = value;
-    list->nodes[freeIndex].next = 0;
-    list->nodes[freeIndex].prev = list->tail;
+    DATA(freeIndex) = value;
+    NEXT(freeIndex) = 0;
+    PREV(freeIndex) = list->tail;
 
     // Update previos node
-    if (!ListIsEmpty(list))
-        list->nodes[list->tail].next = freeIndex;
+    if (!ListIsEmpty(LIST_TYPE, list))
+        NEXT(list->tail) = freeIndex;
 
     // Update tail and head
-    if (ListIsEmpty(list))
+    if (ListIsEmpty(LIST_TYPE, list))
         list->head = freeIndex;
     list->tail = freeIndex;
 
@@ -80,17 +152,17 @@ size_t ListPushBack(List* list, int value) //Th
     return freeIndex;
 }
 
-void ListPopBack(List* list, int* out) //th
+void TEMPLATE(_ListPopBack, LIST_TYPE)(LIST* list, int* out)
 {
     size_t currentIndex = list->tail;
 
-    *out = list->nodes[currentIndex].data;
+    *out = DATA(currentIndex);
 
     // Update tail
-    list->tail = list->nodes[currentIndex].prev;
+    list->tail = PREV(currentIndex);
 
     // Update previos node
-    list->nodes[list->tail].next = 0;
+    NEXT(list->tail) = 0;
 
     StackPush(size_t, list->freeNodes, currentIndex);
 
@@ -100,22 +172,26 @@ void ListPopBack(List* list, int* out) //th
     // Update head???
 }
 
-size_t ListPushFront(List* list, int value)
+size_t TEMPLATE(_ListPushFront, LIST_TYPE)(LIST* list, int value)
 {
+
+    if (list->size == list->capacity - 1)
+        TEMPLATE(_ListResize, LIST_TYPE)(list, (list->capacity - 1) * 2);
+
     size_t freeIndex = 0;
     StackPop(size_t, list->freeNodes, &freeIndex);
 
     // Insert current node
-    list->nodes[freeIndex].data = value;
-    list->nodes[freeIndex].next = list->head;
-    list->nodes[freeIndex].prev = 0;
+    DATA(freeIndex) = value;
+    NEXT(freeIndex) = list->head;
+    PREV(freeIndex) = 0;
  
     // Update next node
-    if (!ListIsEmpty(list))
-        list->nodes[list->head].prev = freeIndex;
+    if (!ListIsEmpty(LIST_TYPE, list))
+        PREV(list->head) = freeIndex;
 
     // Update tail and head
-    if (ListIsEmpty(list))
+    if (ListIsEmpty(LIST_TYPE, list))
         list->tail = freeIndex;
     list->head = freeIndex;
 
@@ -124,17 +200,17 @@ size_t ListPushFront(List* list, int value)
     return freeIndex;
 }
 
-void ListPopFront(List* list, int* out)
+void TEMPLATE(_ListPopFront, LIST_TYPE)(LIST* list, int* out)
 {
     size_t currentIndex = list->head;
 
-    *out = list->nodes[currentIndex].data;
+    *out = DATA(currentIndex);
 
     // Update head
-    list->head = list->nodes[currentIndex].next;
+    list->head = NEXT(currentIndex);
 
     // Update next node
-    list->nodes[list->head].prev = 0;
+    PREV(list->head) = 0;
 
     StackPush(size_t, list->freeNodes, currentIndex);
 
@@ -144,46 +220,52 @@ void ListPopFront(List* list, int* out)
     // Update head???
 }
 
-size_t ListInsert(List* list, size_t index, int value)
+size_t TEMPLATE(_ListInsert, LIST_TYPE)(LIST* list, size_t index, int value)
 {
+
+    if (list->size == list->capacity - 1)
+        TEMPLATE(_ListResize, LIST_TYPE)(list, (list->capacity - 1) * 2);
+
     size_t freeIndex = 0;
     StackPop(size_t, list->freeNodes, &freeIndex);
 
     list->nodes[freeIndex].data = value;
     
-    list->nodes[freeIndex].next = list->nodes[index].next;
-    list->nodes[freeIndex].prev = index;
+    NEXT(freeIndex) = NEXT(index);
+    PREV(freeIndex) = index;
 
-    list->nodes[list->nodes[index].next].prev = freeIndex;
-    list->nodes[index].next = freeIndex;
+    PREV(NEXT(index)) = freeIndex;
+    NEXT(index) = freeIndex;
 
     ++list->size;
 
     return freeIndex;
 }
 
-void ListDelete(List* list, size_t index, int* out)
+void TEMPLATE(_ListDelete, LIST_TYPE)(LIST* list, size_t index, int* out)
 {
     *out = list->nodes[index].data;
     
-    list->nodes[list->nodes[index].prev].next = list->nodes[index].next;
-    list->nodes[list->nodes[index].next].prev = list->nodes[index].prev;
+    NEXT(PREV(index)) = NEXT(index);
+    PREV(NEXT(index)) = PREV(index);
 
     StackPush(size_t, list->freeNodes, index);
 
     --list->size;
 }
 
-int ListSize(List* list)
+int TEMPLATE(_ListSize, LIST_TYPE)(LIST* list)
 {
     return list->size;
 }
 
-void ListDump(List* list, size_t index)
+void TEMPLATE(_ListDump, LIST_TYPE)(LIST* list, size_t index)
 {
     if (index == 0)
         return;
 
     printf("%zu next: %zu, prev: %zu\n", list->nodes[index].data, list->nodes[index].next, list->nodes[index].prev);
-    ListDump(list, NEXT(index));
+    ListDump(LIST_TYPE, list, NEXT(index));
 }
+
+#endif

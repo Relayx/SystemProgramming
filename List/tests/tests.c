@@ -1,6 +1,8 @@
 #include <stdio.h>
 
+#define LIST_TYPE int
 #include "../includes/list.h"
+#undef LIST_TYPE
 
 const char* const RESET ="\033[0m";
 const char* const RED ="\033[1;31m";
@@ -14,46 +16,46 @@ const char* const BLUE = "\033[1;34m";
 
 int PushesBackTest()
 {
-    List list;
-    ListCtor(&list, 10);
-    ListPushBack(&list, 25);
-    ListPushBack(&list, 40);
+    List_int list = {};
+    ListCtor(int, &list, 10);
+    ListPushBack(int, &list, 25);
+    ListPushBack(int, &list, 40);
 
     int temp;
-    ListPopBack(&list, &temp);
+    ListPopBack(int, &list, &temp);
 
     return temp;
 }
 
 int PushesFrontTest()
 {
-    List list;
-    ListCtor(&list, 10);
-    ListPushFront(&list, 25);
-    ListPushFront(&list, 39);
+    List_int list = {};
+    ListCtor(int, &list, 10);
+    ListPushFront(int, &list, 25);
+    ListPushFront(int, &list, 39);
 
     int temp;
-    ListPopFront(&list, &temp);
+    ListPopFront(int, &list, &temp);
 
     return temp;
 }
 
 int WithEmptyTest()
 {
-    List list;
-    ListCtor(&list, 10);
-    ListPushFront(&list, 25);
-    ListPushFront(&list, 39);
+    List_int list = {};
+    ListCtor(int, &list, 10);
+    ListPushFront(int, &list, 25);
+    ListPushFront(int, &list, 39);
 
 
     int temp;
-    ListPopBack(&list, &temp);
-    ListPopBack(&list, &temp);
+    ListPopBack(int, &list, &temp);
+    ListPopBack(int, &list, &temp);
 
-    ListDump(&list, list.head);
+    ListDump(int, &list, list.head);
 
-    ListPushBack(&list, 5);
-    ListPopFront(&list, &temp);
+    ListPushBack(int, &list, 5);
+    ListPopFront(int, &list, &temp);
 
     return temp;
 }
@@ -61,18 +63,18 @@ int WithEmptyTest()
 
 int VariativeTest()
 {
-    List list;
-    ListCtor(&list, 10);
-    size_t index = ListPushBack(&list, 10);
-    ListPushBack(&list, 20);
+    List_int list = {};
+    ListCtor(int, &list, 10);
+    size_t index = ListPushBack(int, &list, 10);
+    ListPushBack(int, &list, 20);
 
-    ListInsert(&list, index, 30);
-    size_t index2 = ListInsert(&list, index, 40);
+    ListInsert(int, &list, index, 30);
+    size_t index2 = ListInsert(int, &list, index, 40);
     int temp;
-    ListDelete(&list, index2, &temp);
+    ListDelete(int, &list, index2, &temp);
 
-    ListPopBack(&list, &temp);
-    ListPopBack(&list, &temp);
+    ListPopBack(int, &list, &temp);
+    ListPopBack(int, &list, &temp);
 
     return temp;
 } 
