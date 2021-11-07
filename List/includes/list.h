@@ -268,4 +268,38 @@ void TEMPLATE(_ListDump, LIST_TYPE)(LIST* list, size_t index)
     ListDump(LIST_TYPE, list, NEXT(index));
 }
 
+void TEMPLATE(_ListImage, LIST_TYPE)(LIST* list)
+{
+    FILE* fout;
+    if ((fout = fopen("input.txt", "w")) == NULL)
+    {
+        return;
+    }
+
+    fprintf(fout, "digraph list {\nnode [colorscheme=paired12]\nedge [colorscheme=paired12]\nrankdir=LR\n");
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        fprintf(fout, "node%zu -> ", i);
+    }
+    fprintf(fout, "node%zu [style=invis]\n", list->size);
+
+    for (size_t i = 0; i <= list->size; ++i)
+    {
+        fprintf(fout, "node%zu [shape=\"record\", style=\"rounded, bold\", color = %zu, label=\" <prev> prev | %d | <next> next \" ];\n",
+                       i, i % 12 + 1, list->nodes[i].data);
+    }
+
+    for (size_t i = 0; i <= list->size; ++i)
+    {
+        fprintf(fout, "node%zu:<prev> -> node%zu [color = %zu]\n", i, list->nodes[i].prev, i % 12 + 1);
+        fprintf(fout, "node%zu:<next> -> node%zu [color = %zu]\n", i, list->nodes[i].next, i % 12 + 1);
+    }
+
+    fprintf(fout, "}\n");
+    fclose(fout);
+
+    system("R:\\Programming\\C\\SystemProgramming\\List\\Graphviz\\bin\\dot.exe input.txt -Tpng -o test.png");
+    system("start .\\test.png");
+}
+
 #endif
