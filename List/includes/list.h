@@ -1,4 +1,10 @@
 
+/***************************************************************************
+* (c)Relayx (Nikita Zvezdin)
+* Free for modification and distribution with the indication of the author
+* GitHub: https://github.com/Relayx
+***************************************************************************/
+
 #ifdef LIST_TYPE
 
 #include <string.h>
@@ -17,6 +23,11 @@ void PrintSizeT(size_t s) { printf("%zu", s); }
 // Template defines
 #define CAT(X,Y) X ## _ ## Y
 #define TEMPLATE(X,Y) CAT(X,Y)
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------->>> List definition <<<-----------------------------
 
 #define NEXT(i) list->nodes[i].next
 #define PREV(i) list->nodes[i].prev
@@ -43,8 +54,12 @@ typedef struct TEMPLATE(_List, LIST_TYPE)
 
     Stack_size_t* freeNodes;
 } LIST;
+////////////////////////////////////////////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------>>> List wrappers <<<------------------------------
 
 #define ListIsEmpty(TYPE, LIST) \
     TEMPLATE(_ListIsEmpty, TYPE)(LIST)
@@ -75,8 +90,12 @@ typedef struct TEMPLATE(_List, LIST_TYPE)
 
 #define ListDump(TYPE, LIST, START) \
     TEMPLATE(_ListDump, TYPE)(LIST, START)
+////////////////////////////////////////////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////////////////////////////////////////////
+// -------------------------->>> List native functions <<<--------------------------
 
 void TEMPLATE(_ListCtor, LIST_TYPE)(LIST* list, size_t capacity)
 {
@@ -95,6 +114,8 @@ void TEMPLATE(_ListCtor, LIST_TYPE)(LIST* list, size_t capacity)
     list->tail = 0;
 }
 
+//---------------------------------------------------------------------------------
+
 void TEMPLATE(_ListDtor, LIST_TYPE)(LIST* list)
 {
     memset(list->nodes, '\0', list->capacity * sizeof(NODE));
@@ -108,6 +129,8 @@ void TEMPLATE(_ListDtor, LIST_TYPE)(LIST* list)
     list->tail = 0;
 }
 
+//---------------------------------------------------------------------------------
+
 void TEMPLATE(_ListResize, LIST_TYPE)(LIST* list, size_t capacity)
 {
     list->capacity = capacity + 1;
@@ -119,10 +142,14 @@ void TEMPLATE(_ListResize, LIST_TYPE)(LIST* list, size_t capacity)
         StackPush(size_t, list->freeNodes, i);
 }
 
+//---------------------------------------------------------------------------------
+
 int TEMPLATE(_ListIsEmpty, LIST_TYPE)(LIST* list)
 {
     return (list->size == 0);
 }
+
+//---------------------------------------------------------------------------------
 
 size_t TEMPLATE(_ListPushBack, LIST_TYPE)(LIST* list, int value)
 {
@@ -152,6 +179,8 @@ size_t TEMPLATE(_ListPushBack, LIST_TYPE)(LIST* list, int value)
     return freeIndex;
 }
 
+//---------------------------------------------------------------------------------
+
 void TEMPLATE(_ListPopBack, LIST_TYPE)(LIST* list, int* out)
 {
     size_t currentIndex = list->tail;
@@ -168,9 +197,13 @@ void TEMPLATE(_ListPopBack, LIST_TYPE)(LIST* list, int* out)
 
     --list->size;
 
+    if (ListIsEmpty(LIST_TYPE, list))
+        list->head = 0;
+
     // Fill free element with poison
-    // Update head???
 }
+
+//---------------------------------------------------------------------------------
 
 size_t TEMPLATE(_ListPushFront, LIST_TYPE)(LIST* list, int value)
 {
@@ -200,6 +233,8 @@ size_t TEMPLATE(_ListPushFront, LIST_TYPE)(LIST* list, int value)
     return freeIndex;
 }
 
+//---------------------------------------------------------------------------------
+
 void TEMPLATE(_ListPopFront, LIST_TYPE)(LIST* list, int* out)
 {
     size_t currentIndex = list->head;
@@ -216,9 +251,13 @@ void TEMPLATE(_ListPopFront, LIST_TYPE)(LIST* list, int* out)
 
     --list->size;
 
+    if (ListIsEmpty(LIST_TYPE, list))
+        list->tail = 0;
+
     // Fill free element with poison
-    // Update head???
 }
+
+//---------------------------------------------------------------------------------
 
 size_t TEMPLATE(_ListInsert, LIST_TYPE)(LIST* list, size_t index, int value)
 {
@@ -242,6 +281,8 @@ size_t TEMPLATE(_ListInsert, LIST_TYPE)(LIST* list, size_t index, int value)
     return freeIndex;
 }
 
+//---------------------------------------------------------------------------------
+
 void TEMPLATE(_ListDelete, LIST_TYPE)(LIST* list, size_t index, int* out)
 {
     *out = list->nodes[index].data;
@@ -254,10 +295,14 @@ void TEMPLATE(_ListDelete, LIST_TYPE)(LIST* list, size_t index, int* out)
     --list->size;
 }
 
+//---------------------------------------------------------------------------------
+
 int TEMPLATE(_ListSize, LIST_TYPE)(LIST* list)
 {
     return list->size;
 }
+
+//---------------------------------------------------------------------------------
 
 void TEMPLATE(_ListDump, LIST_TYPE)(LIST* list, size_t index)
 {
@@ -267,6 +312,8 @@ void TEMPLATE(_ListDump, LIST_TYPE)(LIST* list, size_t index)
     printf("%zu next: %zu, prev: %zu\n", list->nodes[index].data, list->nodes[index].next, list->nodes[index].prev);
     ListDump(LIST_TYPE, list, NEXT(index));
 }
+
+//---------------------------------------------------------------------------------
 
 void TEMPLATE(_ListImage, LIST_TYPE)(LIST* list)
 {
@@ -302,4 +349,10 @@ void TEMPLATE(_ListImage, LIST_TYPE)(LIST* list)
     system("start .\\test.png");
 }
 
-#endif
+////////////////////////////////////////////////////////////////////////////////////
+
+
+#undef LIST
+#undef NODE
+
+#endif //LIST_TYPE -----------------------------------------------------------------
