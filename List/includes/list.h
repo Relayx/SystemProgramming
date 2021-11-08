@@ -269,7 +269,7 @@ size_t TEMPLATE(_ListInsert, LIST_TYPE)(LIST* list, size_t index, int value)
     StackPop(size_t, list->freeNodes, &freeIndex);
 
     list->nodes[freeIndex].data = value;
-    
+
     NEXT(freeIndex) = NEXT(index);
     PREV(freeIndex) = index;
 
@@ -286,7 +286,7 @@ size_t TEMPLATE(_ListInsert, LIST_TYPE)(LIST* list, size_t index, int value)
 void TEMPLATE(_ListDelete, LIST_TYPE)(LIST* list, size_t index, int* out)
 {
     *out = list->nodes[index].data;
-    
+
     NEXT(PREV(index)) = NEXT(index);
     PREV(NEXT(index)) = PREV(index);
 
