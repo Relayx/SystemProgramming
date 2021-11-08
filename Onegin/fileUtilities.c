@@ -40,6 +40,43 @@ FileError ReadToBuffer(const char* fileName, char** buffer)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+FileError WriteFromBuffer(const char* fileName, ParsedBuffer* parsed)
+{
+    FILE* fout;
+    if ((fout = fopen(fileName, "a")) == NULL)
+    {
+        return CANNOT_OPEN_FILE;
+    }
+
+    for (size_t i = 0; i < parsed->size; ++i)
+    {
+        fprintf(fout, "%s\n", parsed->data[i].string);
+    }
+
+    fclose(fout);
+
+    return OK;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+FileError Write(const char* fileName, const char* string)
+{
+    FILE* fout;
+    if ((fout = fopen(fileName, "a")) == NULL)
+    {
+        return CANNOT_OPEN_FILE;
+    }
+
+    fprintf(fout, "%s", string);
+
+    fclose(fout);
+
+    return OK;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
 FileError ParseBuffer(char* buffer, ParsedBuffer* parsed, char symbol)
 {
     parsed->size = 0;
@@ -89,6 +126,22 @@ FileError ClearFile(const char* fileName)
     }
 
     fclose(fout);
+    
+    return OK;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+FileError CopyBuffer(ParsedBuffer* from, ParsedBuffer* to)
+{
+    to->size = from->size;
+
+    to->data = (String*) calloc(to->size, sizeof(String));
+    if (to->data == NULL)
+        return OUT_OF_MEMORY;
+
+    memcpy(to->data, from->data, to->size * sizeof(String));
+
     return OK;
 }
 

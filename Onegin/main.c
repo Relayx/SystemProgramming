@@ -1,5 +1,16 @@
+#include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "includes/fileUtilities.h"
+
+
+#define CHECK(FUNC)               \
+{                                 \
+    FileError code = FUNC;        \
+    if (code != OK) return code;  \
+}
+
 
 const char* SKIP_SYMBOLS = "!?.,;:-_\"'«»() ";
 
@@ -71,22 +82,81 @@ void StringSort(ParsedBuffer* parsed, int (*cmp)(const void*, const void*))
         }
 }
 
+FileError OneginsProblem(const char* inputFile, const char* outputFile)
+{
+    FileApi api;
+    if((api = FileApiInit()) == NULL)
+    {
+        assert(!"Fatal Error! File lib was not found");
+        return -1;
+    }
+
+    char* buffer = NULL;
+    FileError error = OK;
+
+    CHECK( api->ClearFile(outputFile) )
+    CHECK( api->ReadToBuffer(inputFile, &buffer) )
+
+    ParsedBuffer parsed = {0};
+    CHECK( ParseBuffer(buffer, &parsed, '\n') )
+
+    ParsedBuffer standartText;
+    CopyBuffer(&parsed, &standartText);
+
+    StringSort(&parsed, (int(*) (const void *, const void *)) DirectStrCmp);
+    CHECK( api->WriteFromBuffer(outputFile, &parsed) )
+
+    //EmptyString
+    CHECK( api->Write(outputFile, "\n") )
+
+    qsort(parsed.data, parsed.size, sizeof(String), (int(*) (const void *, const void *)) inverseStrCmp);
+    CHECK( api->WriteFromBuffer(outputFile, &parsed) )
+
+    //EmptyString
+    CHECK( api->Write(outputFile, "\n") )
+
+    CHECK( api->WriteFromBuffer(outputFile, &standartText) )
+
+    free(buffer);
+    free(parsed.data);
+    free(standartText.data);
+
+    return OK;
+}
+
 int main()
 {
-    char* buffer = NULL;
-    char* fileName = "input.txt";
-    ParsedBuffer data = {0};
+    printf("Onegin's problem\n");
+    printf("(c)Relayx (Nikita Zvezdin) 2021 v1.0\n\n");
 
-    if (ReadToBuffer(fileName, &buffer) != OK)
+    const char input[] = "input.txt";
+    const char output[] = "output.txt";
+
+    FileError code = OneginsProblem(input, output);
+    if (code == OK)
     {
-        printf("YOU DIED\n");
+        printf("Success!\n");
+        return 0;
     }
-    ParseBuffer(buffer, &data, '\n');
 
-    StringSort(&data, (int(*) (const void *, const void *))inverseStrCmp);
+    char* errorCode = "";
+    switch(code)
+    {
+    case CANNOT_OPEN_FILE:
+        errorCode = "Couldn't open the file :(";
+        break;
+    case CANNOT_READ_FILE:
+        errorCode = "Couldn't read the file :/";
+        break;
+    case OUT_OF_MEMORY:
+        errorCode = "Not enough memory :<";
+        break;
+    default:
+        errorCode = "Something went wrong... :P";
+        break;
+    }
 
-    for (size_t i = 0; i < data.size; ++i)
-        printf("%s\n", data.data[i].string, data.data[i].length);
+    printf("\nAn error occurred!\n\tError code: %s\n", errorCode);
 
     return 0;
 }
