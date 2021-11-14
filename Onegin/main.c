@@ -5,19 +5,21 @@
 #include "includes/fileUtilities.h"
 
 
+
 #define CHECK(FUNC)               \
 {                                 \
     FileError code = FUNC;        \
     if (code != OK) return code;  \
 }
 
+static const char* SKIP_SYMBOLS = "!?.,;:-_\"'«»()— ";
 
-const char* SKIP_SYMBOLS = "!?.,;:-_\"'Â«Â»() ";
+
 
 int DirectStrCmp(const String* str1, const String* str2)
 {
-    // assert(str1 != NULL);
-    // assert(str2 != NULL);
+    assert(str1 != NULL);
+    assert(str2 != NULL);
 
     char* s1 = str1->string;
     char* s2 = str2->string;
@@ -41,31 +43,22 @@ int DirectStrCmp(const String* str1, const String* str2)
     return (unsigned char)*s1 - (unsigned char)*s2;
 }
 
-int inverseStrCmp(const String* str1, const String* str2)
+int InverseStrCmp(const String* str1, const String* str2)
 {
-//    assert(x1 != NULL);
-//    assert(x2 != NULL);
+   assert(str1 != NULL);
+   assert(str2 != NULL);
 
-    char* s1 = str1->string + str1->length - 1;
-    char* s2 = str2->string + str2->length - 1;
-
-    do
+    for (size_t i = str1->length, j = str2->length; i --> 0 && j --> 0; )
     {
-        while(strspn(s1, SKIP_SYMBOLS)) --s1;
-        while(strspn(s2, SKIP_SYMBOLS)) --s2;
+        while (strspn(str1->string + i, SKIP_SYMBOLS) && --i > 0) {}
+        while (strspn(str2->string + j, SKIP_SYMBOLS) && --j > 0) {}
 
-        if (*s1 == '\0')
-            return 0;
-
-        if (*s1 == *s2)
-        {
-            --s1;
-            --s2;
+        if (str1->string[i] != str2->string[j])
+        {  
+            return (unsigned char)str1->string[i] - (unsigned char)str2->string[j];
         }
-
-    } while (*s1 == *s2);
-
-    return (unsigned char)*s1 - (unsigned char)*s2;
+    }
+    return str1->length - str2->length;
 }
 
 void StringSort(ParsedBuffer* parsed, int (*cmp)(const void*, const void*))
@@ -100,7 +93,7 @@ FileError OneginsProblem(const char* inputFile, const char* outputFile)
     ParsedBuffer parsed = {0};
     CHECK( ParseBuffer(buffer, &parsed, '\n') )
 
-    ParsedBuffer standartText;
+    ParsedBuffer standartText = {0};
     CopyBuffer(&parsed, &standartText);
 
     StringSort(&parsed, (int(*) (const void *, const void *)) DirectStrCmp);
@@ -109,7 +102,7 @@ FileError OneginsProblem(const char* inputFile, const char* outputFile)
     //EmptyString
     CHECK( api->Write(outputFile, "\n") )
 
-    qsort(parsed.data, parsed.size, sizeof(String), (int(*) (const void *, const void *)) inverseStrCmp);
+    qsort(parsed.data, parsed.size, sizeof(String), (int(*) (const void *, const void *)) InverseStrCmp);
     CHECK( api->WriteFromBuffer(outputFile, &parsed) )
 
     //EmptyString
@@ -126,6 +119,8 @@ FileError OneginsProblem(const char* inputFile, const char* outputFile)
 
 int main()
 {
+    system("chcp 1251");
+
     printf("Onegin's problem\n");
     printf("(c)Relayx (Nikita Zvezdin) 2021 v1.0\n\n");
 
