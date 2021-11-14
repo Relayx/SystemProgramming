@@ -63,6 +63,9 @@ int InverseStrCmp(const String* str1, const String* str2)
 
 void StringSort(ParsedBuffer* parsed, int (*cmp)(const void*, const void*))
 {
+    assert(parsed != NULL);
+    assert(cmp != NULL);
+
     for(int i = 0; i < parsed->size - 1; ++i)
         for(int j = i; j < parsed->size; ++j)
         {
@@ -117,15 +120,21 @@ FileError OneginsProblem(const char* inputFile, const char* outputFile)
     return OK;
 }
 
-int main()
+int main(int argc, char **argv)
 {
     system("chcp 1251");
 
     printf("Onegin's problem\n");
     printf("(c)Relayx (Nikita Zvezdin) 2021 v1.0\n\n");
 
-    const char input[] = "input.txt";
-    const char output[] = "output.txt";
+    char* input = "input.txt";
+    char* output = "output.txt";
+
+    if (argc >= 3)
+    {
+        input = argv[1];
+        output = argv[2];
+    }
 
     FileError code = OneginsProblem(input, output);
     if (code == OK)

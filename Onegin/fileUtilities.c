@@ -1,9 +1,9 @@
 #include "includes/fileUtilities.h"
 
-#include <stdio.h>
-#include <sys/stat.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -24,11 +24,11 @@ FileError ReadToBuffer(const char* fileName, char** buffer)
         return OUT_OF_MEMORY;
 
     size_t size = fread(*buffer, sizeof(char), info.st_size, fin);
-    // if (size != info.st_size)
-    // {
-    //     free(*buffer);
-    //     return CANNOT_READ_FILE;
-    // }
+    if (ferror(fin))
+    {
+        free(*buffer);
+        return CANNOT_READ_FILE;
+    }
 
     *(*buffer + size) = '\n';
     *(*buffer + size + 1) = '\0';

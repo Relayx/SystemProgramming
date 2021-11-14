@@ -34,13 +34,74 @@ typedef struct _ParsedBuffer
     size_t size;
 } ParsedBuffer;
 
+/*!
+    Read data from file to buffer
+    @param[in] fileName name of file
+    @param[out] buffer destination of buffer to write data
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError ReadToBuffer(const char* fileName, char** buffer);
+
+/*!
+    Write data from buffer to file
+    @param[in] fileName name of file
+    @param[in] parsed parsed buffer [use ParseBuffer to parse buffer]
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError WriteFromBuffer(const char* fileName, ParsedBuffer* parsed);
 
+//////////////////////////////////////////////////////////////////////////////////
+
+/*!
+    Parse data of buffer
+    @param[in] buffer buffer for parsing
+    @param[out] parsed empty object of ParsedBuffer
+    @param[in] symbol delim for parsing
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError ParseBuffer(char* buffer, ParsedBuffer* parsed, char symbol);
+
+/*!
+    Copy data of parsedBuffer to another parsedBuffer
+    @param[in] from current buffer
+    @param[out] to destination buffer
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError CopyBuffer(ParsedBuffer* from, ParsedBuffer* to);
 
+//////////////////////////////////////////////////////////////////////////////////
+
+/*!
+    Clear file
+    @param[in] fileName name of file
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError ClearFile(const char* fileName);
+
+/*!
+    Write c-string to file
+    @param[in] fileName name of file
+    @param[in] string data to write
+
+    @return Error code
+    @version 1.0
+    @authors Relayx
+*/
 FileError Write(const char* fileName, const char* string);
 
 struct File_Api_v1_0
