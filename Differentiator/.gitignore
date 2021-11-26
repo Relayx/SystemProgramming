@@ -1,0 +1,10 @@
+/.vscode
+/Stack
+/Graphviz
+
+*.o
+*.exe
+*.gch
+*.txt
+*.png
+main.c
