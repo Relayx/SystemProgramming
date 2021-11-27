@@ -33,7 +33,7 @@ Modern C-style stack with templates, protection, debug and dumping. You can also
 ## Examples:
 
 ### SimpleStack
-```
+```c
 #include <stdio.h>
 
 #define STACK_CANARY_PROTECT
