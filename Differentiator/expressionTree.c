@@ -99,30 +99,53 @@ int TreeCalculate(Node* root)
     }
 }
 
-Node* TreeParse(char* string, Node* parent)
+char str[] = "((((1)*(2))*((4)+(2)))+((1)*(2))))";
+char* string = str;
+
+int TreeParseUpdateNode(Node* node) 
 {
-    if (*string == '\0') return NULL;
-    if (*string == ')') {
-        return parent;
+    if (*string == '+') 
+    {
+        node->type = NODE_OP_PLUS;
+        node->value = '+';
+        return 1;
     }
-    if (*string == '(') {
-        Node* new_node = malloc(sizeof(Node));
-        parent->left = TreeParse(++string, new_node);
-        parent->right = TreeParse(++string, new_node);
+    else if (*string == '*') 
+    {
+        node->type = NODE_OP_MUL;
+        node->value = '*';
+        return 1;
     }
-    if (*string == '+') {
-        parent->type = NODE_OP_PLUS;
-        parent->value = '+';
-        return TreeParse(++string, parent);
+    else if (*string >= '0' && *string <= '9') 
+    {
+        node->type = NODE_CONST;
+        node->value = (int)(*string - '0');
+        return 1;
     }
-    if (*string == '*') {
-        parent->type = NODE_OP_MUL;
-        parent->value = '*';
-        return TreeParse(++string, parent);
+
+    return 0;
+}
+
+Node* TreeParse()
+{   
+    printf("%c\n", *string);
+    if (*string == '(')
+    {
+        Node* new_node = (Node*) calloc(1, sizeof(Node));
+        new_node->left = NULL;
+        new_node->right = NULL;
+        new_node->value = '!';
+        new_node->type = NODE_ERROR;
+        ++string;
+        new_node->left = TreeParse(string);
+        string += TreeParseUpdateNode(new_node);
+        new_node->right = TreeParse(string);
+        if (*string == ')') 
+        {
+            ++string;
+        }
+        return new_node;
     }
-    if (*string >= '0' && *string <= '9') {
-        parent->type = NODE_CONST;
-        parent->value = (int)(*string - '0');
-        return TreeParse(++string, parent);
-    }
+
+    return NULL;
 }
