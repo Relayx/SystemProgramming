@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// ----------------------> Declarations <----------------------
+
 typedef struct NodeInfo_ {
   const char* shape;
   const char* value;
@@ -45,10 +47,14 @@ static const char* NODE_VALUES[] = {
 };
 
 static NodeInfo GetNodeInfo(Node* node);
+
 static void PrintNode(Node* node, FILE* fout, NodeInfo* info);
+
 static size_t _TreeDump(Node* node, FILE* fout, size_t index);
 
-void TreeDump(Node* root) {
+// ----------------------> Definitions <----------------------
+
+void TreeDump(const Tree* tree) {
   FILE* fout;
   if ((fout = fopen("expression.txt", "w")) == NULL) {
     return;
@@ -56,7 +62,7 @@ void TreeDump(Node* root) {
 
   fprintf(fout, "digraph Tree{\nnode [colorscheme=set312]\nedge [colorscheme=paired12]\nrankdir=UD\n");
 
-  _TreeDump(root, fout, 1);
+  _TreeDump(tree->root, fout, 1);
 
   fprintf(fout, "}\n");
   fclose(fout);
@@ -66,6 +72,8 @@ void TreeDump(Node* root) {
 
   return;
 }
+
+///////////////////////////////////////////////////////////////
 
 static size_t _TreeDump(Node* node, FILE* fout, size_t index) {
   NodeInfo info = GetNodeInfo(node);
@@ -84,6 +92,8 @@ static size_t _TreeDump(Node* node, FILE* fout, size_t index) {
 
   return index;
 }
+
+///////////////////////////////////////////////////////////////
 
 static NodeInfo GetNodeInfo(Node* node) {
   NodeInfo info = {0};
@@ -121,11 +131,13 @@ static NodeInfo GetNodeInfo(Node* node) {
   return info;
 }
 
+///////////////////////////////////////////////////////////////
+
 static void PrintNode(Node* node, FILE* fout, NodeInfo* info) {
   switch (node->type) {
     case NODE_CONST: {
-      static const int kDoubleStrSize = 64;
-      char double_str[kDoubleStrSize];
+      size_t needed = snprintf(NULL, 0, "%lg", node->content.value);
+      char double_str[needed + 1];
       sprintf(double_str, "%lg", node->content.value);
       fprintf(fout, NODE_DECRIPTION, info->index, info->shape, 
               info->color, double_str);

@@ -45,6 +45,16 @@ struct Node_ {
   Node* right;
 };
 
-void TreeDump(Node* root);
+typedef struct Tree_ {
+  Node* root;
+} Tree;
+
+
+
+void TreeDump(const Tree* tree);
+
+double TreeCalculate(const Tree* tree);
+
+void Tree2Latex(const Tree* tree);
 
 #endif

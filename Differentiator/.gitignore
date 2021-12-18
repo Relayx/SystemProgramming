@@ -7,4 +7,8 @@
 *.gch
 *.txt
 *.png
+*.aux
+*.log
+*.pdf
+*.tex
 main.c
