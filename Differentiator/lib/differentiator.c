@@ -45,9 +45,9 @@ static NodeValue FunctionWrapper(TreeNodeFunction function);
 #define FUNC(func, left, right) \
   CreateNode(NODE_FUNCTION, FunctionWrapper(func), left, right)
 
-// ----------------------> Definitions <----------------------s
+// ----------------------> Definitions <----------------------
 
-Tree DifferentiateTree(const Tree* tree) {
+Tree TreeDifferentiate(const Tree* tree) {
   Tree result = {0};
   result.root = Differentiate(tree->root);
   return result;
@@ -110,7 +110,7 @@ static Node* DifferentiateOperation(const Node* node) {
     }
 
     case OP_DIV: {
-      
+      DIV(SUB(MUL(DL, CR), MUL(CL, DR)), MUL(CR, CR)); // DANGER
       break;
     }
 

@@ -20,11 +20,21 @@ static const char* TEX_TEMPLATES[] = {
   [OP_SUB] = "%s - (%s)",
   [OP_MUL] = "(%s) \\cdot (%s)",
   [OP_DIV] = "\\frac{%s}{%s}",
+  [OP_EXP] = "{%s^{%s}}",
   [FUNC_SIN] = "sin(%s)",
   [FUNC_COS] = "cos(%s)",
   [FUNC_TG] = "tg(%s)",
   [FUNC_CTG] = "ctg(%s)",
-  [FUNC_LN] = "ln(%s)"
+  [FUNC_LN] = "ln(%s)",
+  [FUNC_ARCSIN] = "arcsin(%s)", 
+  [FUNC_ARCCOS] = "arccos(%s)",
+  [FUNC_ARCTG] = "arctg(%s)",
+  [FUNC_ARCCTG] = "arcctg(%s)",
+  [FUNC_SH] = "sh(%s)",
+  [FUNC_CH] = "ch(%s)",
+  [FUNC_TH] = "th(%s)",
+  [FUNC_LOG] = "log_{%s}{%s}",
+  [FUNC_SQRT] = "\\sqrt{%s}"
 };
 
 static char* _Tree2Latex(const Node* node);

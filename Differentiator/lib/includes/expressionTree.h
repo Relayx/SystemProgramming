@@ -19,6 +19,7 @@ typedef enum {
   OP_SUB,
   OP_MUL,
   OP_DIV,
+  OP_EXP,
   OP_TYPES_COUNT
 } TreeNodeOperation;
 
@@ -28,7 +29,16 @@ typedef enum {
   FUNC_COS,
   FUNC_TG,
   FUNC_CTG,
-  FUNC_LN
+  FUNC_ARCSIN,
+  FUNC_ARCCOS,
+  FUNC_ARCTG,
+  FUNC_ARCCTG,
+  FUNC_SH,
+  FUNC_CH,
+  FUNC_TH,
+  FUNC_LN,
+  FUNC_LOG,
+  FUNC_SQRT
 } TreeNodeFunction;
 
 typedef union NodeValue_ {
@@ -62,6 +72,8 @@ Node* CreateNode(TreeNodeType type, NodeValue value,
 
 Node* CopySubTree(const Node* node);
 
-Tree DifferentiateTree(const Tree* tree);
+Tree TreeDifferentiate(const Tree* tree);
+
+Tree TreeParse(const char* fileName);
 
 #endif

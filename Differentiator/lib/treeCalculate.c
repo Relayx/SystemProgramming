@@ -130,6 +130,11 @@ static double TreeCalculateOperation(double left,
       break;
     }
 
+    case OP_EXP: {
+      return pow(left, right);
+      break;
+    }
+
     default: {
       return NAN;
       break;

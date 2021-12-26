@@ -4,8 +4,8 @@ TARGET = Differentiator
 
 all: $(TARGET)
 
-$(TARGET): treeDump.o main.o treeCalculate.o tree2Latex.o utilities.o differentiator.o
-	gcc -o $(TARGET) treeDump.o main.o treeCalculate.o tree2Latex.o utilities.o differentiator.o
+$(TARGET): treeDump.o main.o treeCalculate.o tree2Latex.o utilities.o differentiator.o treeParse.o
+	gcc -o $(TARGET) treeDump.o main.o treeCalculate.o tree2Latex.o utilities.o differentiator.o treeParse.o
 
 main.o: main.c
 	gcc -c -o main.o main.c
@@ -24,3 +24,6 @@ utilities.o: lib/utilities.c
 
 differentiator.o: lib/differentiator.c
 	gcc -c -o differentiator.o lib/differentiator.c
+
+treeParse.o: lib/treeParse.c
+	gcc -c -o treeParse.o lib/treeParse.c

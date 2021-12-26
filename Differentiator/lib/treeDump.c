@@ -38,7 +38,8 @@ static const char* NODE_SHAPES[] = {
   [OP_ADD] = "square",
   [OP_SUB] = "triangle",
   [OP_MUL] = "hexagon",
-  [OP_DIV] = "diamond"
+  [OP_DIV] = "diamond",
+  [OP_EXP] = "house"
 };
 
 static const char* NODE_VALUES[] = {
@@ -47,6 +48,7 @@ static const char* NODE_VALUES[] = {
   [OP_SUB] = "-",
   [OP_MUL] = "*",
   [OP_DIV] = "/",
+  [OP_EXP] = "^",
   [FUNC_SIN] = "sin",
   [FUNC_COS] = "cos",
   [FUNC_TG] = "tg",
