@@ -7,7 +7,7 @@
 // ----------------------> Declarations <----------------------
 
 static double TreeCalculateFunction(double value, 
-                              TreeNodeFunctions function);
+                              TreeNodeFunction function);
 
 static double TreeCalculateOperation(double left, 
                                double right, 
@@ -59,7 +59,7 @@ static double _TreeCalculate(const Node* node) {
       return value;
       break;
     }
-  
+
     default: {
       return NAN;
       break;
@@ -70,7 +70,7 @@ static double _TreeCalculate(const Node* node) {
 ///////////////////////////////////////////////////////////////
 
 static double TreeCalculateFunction(double value, 
-                              TreeNodeFunctions function) {
+                              TreeNodeFunction function) {
   switch (function) {
     case FUNC_COS: {
       return cos(value);

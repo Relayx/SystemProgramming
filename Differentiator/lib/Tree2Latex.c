@@ -5,6 +5,15 @@
 #include <stdlib.h>
 #include <math.h>
 
+// ----------------------> Declarations <----------------------
+
+static const char* TEX_MAIN = " \
+  \\documentclass{article} \n\
+  \\begin{document} \n\
+    $%s$ \n\
+  \\end{document} \n\
+";
+
 static const char* TEX_TEMPLATES[] = {
   [NODE_ERROR] = "!ERROR!",
   [OP_ADD] = "%s + %s",
@@ -22,6 +31,8 @@ static char* _Tree2Latex(const Node* node);
 
 static char* FormatString(const char* format, ...);
 
+// ----------------------> Definitions <----------------------
+
 void Tree2Latex(const Tree* tree) {
   FILE* fout;
   if ((fout = fopen("lat.tex", "w")) == NULL) {
@@ -29,7 +40,7 @@ void Tree2Latex(const Tree* tree) {
   }
 
   char* str = _Tree2Latex(tree->root);
-  fprintf(fout, "\\documentclass{article}\n\\begin{document}\n$%s$\n\\end{document}", str);
+  fprintf(fout, TEX_MAIN, str);
 
   fclose(fout);
   free(str);

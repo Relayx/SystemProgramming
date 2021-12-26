@@ -12,7 +12,15 @@ typedef struct NodeInfo_ {
   int index;
 } NodeInfo;
 
-static const char* NODE_DECRIPTION = "node%d [ \
+static const char* GRAPH_SETTINGS = " \
+  digraph Tree{ \n\
+  node [colorscheme=set312] \n\
+  edge [colorscheme=paired12] \n\
+  rankdir=UD \n\
+";
+
+static const char* NODE_DECRIPTION = " \
+  node%d [ \
   shape=\"%s\", \
   style=\"rounded, bold, filled\", \
   fillcolor=%d, \
@@ -60,7 +68,7 @@ void TreeDump(const Tree* tree) {
     return;
   }
 
-  fprintf(fout, "digraph Tree{\nnode [colorscheme=set312]\nedge [colorscheme=paired12]\nrankdir=UD\n");
+  fprintf(fout, GRAPH_SETTINGS);
 
   _TreeDump(tree->root, fout, 1);
 
