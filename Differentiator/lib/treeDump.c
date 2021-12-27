@@ -8,8 +8,8 @@
 typedef struct NodeInfo_ {
   const char* shape;
   const char* value;
-  int color;
-  int index;
+  int         color;
+  int         index;
 } NodeInfo;
 
 static const char* GRAPH_SETTINGS = " \
@@ -27,40 +27,53 @@ static const char* NODE_DECRIPTION = " \
   fontcolor=\"white\", \
   label=\"%s\", \
   width=0.9, \
-  height=0.9 \
+  height=0.9, \
+  fontname=\"Impact\" \
   ]";
 
 static const char* NODE_SHAPES[] = {
-  [NODE_ERROR] = "none",
-  [NODE_CONST] = "circle",
+  [NODE_ERROR]    = "none",
+  [NODE_CONST]    = "circle",
   [NODE_VARIABLE] = "doublecircle",
   [NODE_FUNCTION] = "note",
-  [OP_ADD] = "square",
-  [OP_SUB] = "triangle",
-  [OP_MUL] = "hexagon",
-  [OP_DIV] = "diamond",
-  [OP_EXP] = "house"
+  [OP_ADD]        = "square",
+  [OP_SUB]        = "triangle",
+  [OP_MUL]        = "hexagon",
+  [OP_DIV]        = "diamond",
+  [OP_EXP]        = "house"
 };
 
 static const char* NODE_VALUES[] = {
-  [NODE_ERROR] = "!",
-  [OP_ADD] = "+",
-  [OP_SUB] = "-",
-  [OP_MUL] = "*",
-  [OP_DIV] = "/",
-  [OP_EXP] = "^",
-  [FUNC_SIN] = "sin",
-  [FUNC_COS] = "cos",
-  [FUNC_TG] = "tg",
-  [FUNC_CTG] = "ctg",
-  [FUNC_LN] = "ln"
+  [NODE_ERROR]  = "!",
+  [OP_ADD]      = "+",
+  [OP_SUB]      = "-",
+  [OP_MUL]      = "×",
+  [OP_DIV]      = "/",
+  [OP_EXP]      = "^",
+  [FUNC_SIN]    = "sin",
+  [FUNC_COS]    = "cos",
+  [FUNC_TG]     = "tg",
+  [FUNC_CTG]    = "ctg",
+  [FUNC_LN]     = "ln",
+  [FUNC_ARCSIN] = "arcsin",
+  [FUNC_ARCCOS] = "arccos",
+  [FUNC_ARCCTG] = "arctg",
+  [FUNC_ARCCTG] = "arcctg",
+  [FUNC_SQRT]   = "sqrt",
+  [FUNC_SH]     = "sh",
+  [FUNC_CH]     = "ch",
+  [FUNC_TH]     = "th"
 };
 
-static NodeInfo GetNodeInfo(Node* node);
+static NodeInfo GetNodeInfo(const Node* node);
 
-static void PrintNode(Node* node, FILE* fout, NodeInfo* info);
+static void PrintNode(const Node* node, 
+                      const FILE* fout, 
+                      const NodeInfo* info);
 
-static size_t _TreeDump(Node* node, FILE* fout, size_t index);
+static size_t _TreeDump(const Node* node, 
+                        const FILE* fout, 
+                        size_t index);
 
 // ----------------------> Definitions <----------------------
 
@@ -85,7 +98,10 @@ void TreeDump(const Tree* tree) {
 
 ///////////////////////////////////////////////////////////////
 
-static size_t _TreeDump(Node* node, FILE* fout, size_t index) {
+static size_t _TreeDump(const Node* node, 
+                        const FILE* fout, 
+                        size_t index
+) {
   NodeInfo info = GetNodeInfo(node);
   info.index = index;
 
@@ -105,10 +121,11 @@ static size_t _TreeDump(Node* node, FILE* fout, size_t index) {
 
 ///////////////////////////////////////////////////////////////
 
-static NodeInfo GetNodeInfo(Node* node) {
+static NodeInfo GetNodeInfo(const Node* node) {
   NodeInfo info = {0};
 
   switch (node->type) {
+
     case NODE_OPERATION: {
       info.color = node->content.operation;
       info.shape = NODE_SHAPES[node->content.operation];
@@ -129,13 +146,14 @@ static NodeInfo GetNodeInfo(Node* node) {
         info.shape = NODE_SHAPES[node->type];
       break;
     }
-  
+
     default: {
       info.color = node->type;
       info.shape = NODE_SHAPES[node->type];
       info.value = NODE_VALUES[node->type];
       break;
     }
+
   }
 
   return info;
@@ -143,8 +161,12 @@ static NodeInfo GetNodeInfo(Node* node) {
 
 ///////////////////////////////////////////////////////////////
 
-static void PrintNode(Node* node, FILE* fout, NodeInfo* info) {
+static void PrintNode(const Node* node, 
+                      const FILE* fout, 
+                      const NodeInfo* info
+) {
   switch (node->type) {
+
     case NODE_CONST: {
       size_t needed = snprintf(NULL, 0, "%lg", node->content.value);
       char double_str[needed + 1];
@@ -165,5 +187,6 @@ static void PrintNode(Node* node, FILE* fout, NodeInfo* info) {
               info->color, info->value);
       break;
     }
+
   }
 }

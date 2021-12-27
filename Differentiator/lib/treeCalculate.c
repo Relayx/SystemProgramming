@@ -7,11 +7,11 @@
 // ----------------------> Declarations <----------------------
 
 static double TreeCalculateFunction(double value, 
-                              TreeNodeFunction function);
+                                    TreeNodeFunction function);
 
 static double TreeCalculateOperation(double left, 
-                               double right, 
-                               TreeNodeType operation);
+                                     double right, 
+                                     TreeNodeType operation);
 
 static double _TreeCalculate(const Node* node);
 
@@ -25,29 +25,26 @@ double TreeCalculate(const Tree* tree) {
 
 static double _TreeCalculate(const Node* node) {  
   switch (node->type) {
+
     case NODE_CONST: {
         return node->content.value;
       break;
     }
 
-    case NODE_ERROR: {
-      return NAN;
-      break;
-    }
-
     case NODE_OPERATION: {
-      double left = _TreeCalculate(node->left);
+      double left  = _TreeCalculate(node->left);
       double right = _TreeCalculate(node->right);
+
       return TreeCalculateOperation(left, 
-                                     right,
-                                     node->content.operation);
+                                    right,
+                                    node->content.operation);
       break;
     }
 
     case NODE_FUNCTION: {
       double result = _TreeCalculate(node->right);
       return TreeCalculateFunction(result, 
-                                    node->content.function);
+                                   node->content.function);
       break;
     }
 
@@ -60,18 +57,22 @@ static double _TreeCalculate(const Node* node) {
       break;
     }
 
+    case NODE_ERROR:
     default: {
       return NAN;
       break;
     }
+
   }
 }
 
 ///////////////////////////////////////////////////////////////
 
 static double TreeCalculateFunction(double value, 
-                              TreeNodeFunction function) {
+                                    TreeNodeFunction function
+) {
   switch (function) {
+
     case FUNC_COS: {
       return cos(value);
       break;
@@ -107,9 +108,11 @@ static double TreeCalculateFunction(double value,
 ///////////////////////////////////////////////////////////////
 
 static double TreeCalculateOperation(double left, 
-                               double right, 
-                               TreeNodeType operation) {
+                                     double right, 
+                                     TreeNodeType operation
+) {
   switch (operation) {
+
     case OP_ADD: {
       return left + right;
       break;
@@ -139,5 +142,6 @@ static double TreeCalculateOperation(double left,
       return NAN;
       break;
     }
+
   }
 }

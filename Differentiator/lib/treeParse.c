@@ -6,6 +6,29 @@
 #include <string.h>
 #include <sys/stat.h>
 
+// ----------------------> Declarations <----------------------
+
+typedef struct _WordToken {
+  const char* token;
+  size_t id;
+} WordToken;
+
+static const WordToken FUNCTIONS[] = {
+  {"cos", FUNC_COS},
+  {"sin", FUNC_SIN},
+  {"tg", FUNC_TG},
+  {"ctg", FUNC_CTG},
+  {"arctg", FUNC_ARCCTG},
+  {"arcctg", FUNC_ARCCTG},
+  {"arcsin", FUNC_ARCSIN},
+  {"arccos", FUNC_ARCCOS},
+  {"sh", FUNC_SH},
+  {"ch", FUNC_CH},
+  {"th", FUNC_TH},
+  {"sqrt", FUNC_SQRT},
+  {"ln", FUNC_LN},
+};
+
 static NodeValue OperationWrapper(TreeNodeOperation operation);
 
 static NodeValue ConstWrapper(double number);
@@ -20,7 +43,10 @@ static Node* GetExpression(const char** str);
 static Node* GetTerm(const char** str);
 static Node* GetExponent(const char** str);
 static Node* GetPriority(const char** str);
+static Node* GenFunction(const char** str);
 static Node* GetNumber(const char** str);
+
+// ----------------------> Definitions <----------------------
 
 Tree TreeParse(const char* fileName) {
   FILE* fin;
@@ -129,10 +155,27 @@ static Node* GetExponent(const char** str) {
 static Node* GetPriority(const char** str) {
   if (**str == '(') {
     ++(*str);
-    Node* cur = GetExpression(str);
+    Node* value = GetExpression(str);
     Require(str, ')');
-    return cur;
+    return value;
   }
+  return GenFunction(str);
+}
+
+static Node* GenFunction(const char** str) {
+  size_t size = sizeof(FUNCTIONS) / sizeof(FUNCTIONS[0]);
+  for (size_t i = 0; i < size; ++i) {
+    size_t token_size = strlen(FUNCTIONS[i].token);
+    if (strncmp(*str, FUNCTIONS[i].token, token_size) == 0) {
+      *str += token_size;
+      Require(str, '(');
+      Node* value = GetExpression(str);
+      Require(str, ')');
+      return CreateNode(NODE_FUNCTION, FunctionWrapper(FUNCTIONS[i].id),
+                        NULL, value);
+    }
+  }
+
   return GetNumber(str);
 }
 

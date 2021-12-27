@@ -15,26 +15,25 @@ static const char* TEX_MAIN = " \
 ";
 
 static const char* TEX_TEMPLATES[] = {
-  [NODE_ERROR] = "!ERROR!",
-  [OP_ADD] = "%s + %s",
-  [OP_SUB] = "%s - (%s)",
-  [OP_MUL] = "(%s) \\cdot (%s)",
-  [OP_DIV] = "\\frac{%s}{%s}",
-  [OP_EXP] = "{%s^{%s}}",
-  [FUNC_SIN] = "sin(%s)",
-  [FUNC_COS] = "cos(%s)",
-  [FUNC_TG] = "tg(%s)",
-  [FUNC_CTG] = "ctg(%s)",
-  [FUNC_LN] = "ln(%s)",
+  [NODE_ERROR]  = "!ERROR!",
+  [OP_ADD]      = "%s + %s",
+  [OP_SUB]      = "%s - (%s)",
+  [OP_MUL]      = "(%s) \\cdot (%s)",
+  [OP_DIV]      = "\\frac{%s}{%s}",
+  [OP_EXP]      = "{%s^{%s}}",
+  [FUNC_SIN]    = "sin(%s)",
+  [FUNC_COS]    = "cos(%s)",
+  [FUNC_TG]     = "tg(%s)",
+  [FUNC_CTG]    = "ctg(%s)",
+  [FUNC_LN]     = "ln(%s)",
   [FUNC_ARCSIN] = "arcsin(%s)", 
   [FUNC_ARCCOS] = "arccos(%s)",
-  [FUNC_ARCTG] = "arctg(%s)",
+  [FUNC_ARCTG]  = "arctg(%s)",
   [FUNC_ARCCTG] = "arcctg(%s)",
-  [FUNC_SH] = "sh(%s)",
-  [FUNC_CH] = "ch(%s)",
-  [FUNC_TH] = "th(%s)",
-  [FUNC_LOG] = "log_{%s}{%s}",
-  [FUNC_SQRT] = "\\sqrt{%s}"
+  [FUNC_SH]     = "sh(%s)",
+  [FUNC_CH]     = "ch(%s)",
+  [FUNC_TH]     = "th(%s)",
+  [FUNC_SQRT]   = "\\sqrt{%s}"
 };
 
 static char* _Tree2Latex(const Node* node);
@@ -64,14 +63,9 @@ void Tree2Latex(const Tree* tree) {
 
 static char* _Tree2Latex(const Node* node) {
   switch (node->type) {
+
     case NODE_CONST: {
-      char* res = FormatString("%lg", node->content.value);
-      return res;
-      break;
-    }
-
-    case NODE_ERROR: {
-
+      return FormatString("%lg", node->content.value);
       break;
     }
 
@@ -89,23 +83,24 @@ static char* _Tree2Latex(const Node* node) {
 
     case NODE_FUNCTION: {
       char* value = _Tree2Latex(node->right);
-      char* res = FormatString(TEX_TEMPLATES[node->content.function],
-                         value);
+      char* res   = FormatString(TEX_TEMPLATES[node->content.function],
+                                 value);
       free(value);
       return res;
       break;
     }
 
     case NODE_VARIABLE: {
-      char* res = FormatString("%c", node->content.variable);
-      return res;
+      return FormatString("%c", node->content.variable);
       break;
     }
 
+    case NODE_ERROR:
     default: {
-
+      return FormatString("%s", "Error!");
       break;
     }
+
   }
 }
 

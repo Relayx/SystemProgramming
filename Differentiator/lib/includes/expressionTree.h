@@ -37,29 +37,28 @@ typedef enum {
   FUNC_CH,
   FUNC_TH,
   FUNC_LN,
-  FUNC_LOG,
   FUNC_SQRT
 } TreeNodeFunction;
 
 typedef union NodeValue_ {
-  double value;
-  char variable;
+  double            value;
+  char              variable;
   TreeNodeOperation operation;
-  TreeNodeFunction function;
+  TreeNodeFunction  function;
 } NodeValue;
 
 struct Node_ {
   TreeNodeType type;
-  NodeValue content;
-  Node* left;
-  Node* right;
+  NodeValue    content;
+  Node*        left;
+  Node*        right;
 };
 
 typedef struct Tree_ {
   Node* root;
 } Tree;
 
-
+///////////////////////////////////////////////////////////////
 
 void TreeDump(const Tree* tree);
 
@@ -67,8 +66,10 @@ double TreeCalculate(const Tree* tree);
 
 void Tree2Latex(const Tree* tree);
 
-Node* CreateNode(TreeNodeType type, NodeValue value, 
-                 Node* left, Node* right);
+Node* CreateNode(TreeNodeType type, 
+                 NodeValue value, 
+                 Node* left, 
+                 Node* right);
 
 Node* CopySubTree(const Node* node);
 
