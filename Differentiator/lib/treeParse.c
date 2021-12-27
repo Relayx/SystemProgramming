@@ -10,23 +10,23 @@
 
 typedef struct _WordToken {
   const char* token;
-  size_t id;
+  size_t      id;
 } WordToken;
 
 static const WordToken FUNCTIONS[] = {
-  {"cos", FUNC_COS},
-  {"sin", FUNC_SIN},
-  {"tg", FUNC_TG},
-  {"ctg", FUNC_CTG},
-  {"arctg", FUNC_ARCCTG},
+  {"cos",    FUNC_COS},
+  {"sin",    FUNC_SIN},
+  {"tg",     FUNC_TG},
+  {"ctg",    FUNC_CTG},
+  {"arctg",  FUNC_ARCTG},
   {"arcctg", FUNC_ARCCTG},
   {"arcsin", FUNC_ARCSIN},
   {"arccos", FUNC_ARCCOS},
-  {"sh", FUNC_SH},
-  {"ch", FUNC_CH},
-  {"th", FUNC_TH},
-  {"sqrt", FUNC_SQRT},
-  {"ln", FUNC_LN},
+  {"sh",     FUNC_SH},
+  {"ch",     FUNC_CH},
+  {"th",     FUNC_TH},
+  {"sqrt",   FUNC_SQRT},
+  {"ln",     FUNC_LN},
 };
 
 static NodeValue OperationWrapper(TreeNodeOperation operation);
@@ -171,8 +171,10 @@ static Node* GenFunction(const char** str) {
       Require(str, '(');
       Node* value = GetExpression(str);
       Require(str, ')');
-      return CreateNode(NODE_FUNCTION, FunctionWrapper(FUNCTIONS[i].id),
-                        NULL, value);
+      return CreateNode(NODE_FUNCTION, 
+                        FunctionWrapper(FUNCTIONS[i].id),
+                        NULL, 
+                        value);
     }
   }
 

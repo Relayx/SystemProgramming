@@ -93,6 +93,47 @@ static double TreeCalculateFunction(double value,
       break;
     }
 
+    case FUNC_ARCSIN: {
+      return asin(value);
+      break;
+    }
+
+    case FUNC_ARCCOS: {
+      return acos(value);
+      break;
+    }
+
+    case FUNC_ARCTG: {
+      return atan(value);
+      break;
+    }
+
+    case FUNC_ARCCTG: {
+      return M_PI / 2 - atan(value);
+      break;
+    }
+
+    case FUNC_SH: {
+      return sinh(value);
+      break;
+    }
+
+    case FUNC_CH: {
+      return cosh(value);
+      break;
+    }
+
+    case FUNC_TH: {
+      return tanh(value);
+      break;
+    }
+
+    case FUNC_SQRT: {
+      printf("%lg\n", value);
+      return sqrt(value);
+      break;
+    }
+
     case FUNC_LN: {
       return log(value);
       break;
@@ -102,6 +143,7 @@ static double TreeCalculateFunction(double value,
       return NAN;
       break;
     }
+
   }
 }
 

@@ -68,11 +68,11 @@ static const char* NODE_VALUES[] = {
 static NodeInfo GetNodeInfo(const Node* node);
 
 static void PrintNode(const Node* node, 
-                      const FILE* fout, 
+                      FILE* fout, 
                       const NodeInfo* info);
 
 static size_t _TreeDump(const Node* node, 
-                        const FILE* fout, 
+                        FILE* fout, 
                         size_t index);
 
 // ----------------------> Definitions <----------------------
@@ -99,7 +99,7 @@ void TreeDump(const Tree* tree) {
 ///////////////////////////////////////////////////////////////
 
 static size_t _TreeDump(const Node* node, 
-                        const FILE* fout, 
+                        FILE* fout, 
                         size_t index
 ) {
   NodeInfo info = GetNodeInfo(node);
@@ -162,7 +162,7 @@ static NodeInfo GetNodeInfo(const Node* node) {
 ///////////////////////////////////////////////////////////////
 
 static void PrintNode(const Node* node, 
-                      const FILE* fout, 
+                      FILE* fout, 
                       const NodeInfo* info
 ) {
   switch (node->type) {

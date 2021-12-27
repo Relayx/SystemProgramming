@@ -37,7 +37,8 @@ typedef enum {
   FUNC_CH,
   FUNC_TH,
   FUNC_LN,
-  FUNC_SQRT
+  FUNC_SQRT,
+  FUNC_TYPES_COUNT
 } TreeNodeFunction;
 
 typedef union NodeValue_ {

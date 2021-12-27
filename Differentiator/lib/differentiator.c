@@ -55,6 +55,7 @@ Tree TreeDifferentiate(const Tree* tree) {
 
 static Node* Differentiate(const Node* node) {
   switch (node->type) {
+
     case NODE_CONST: {
       return DifferentiateConst(node);
       break;
@@ -80,6 +81,7 @@ static Node* Differentiate(const Node* node) {
 
       break;
     }
+
   }
 }
 
@@ -118,6 +120,7 @@ static Node* DifferentiateOperation(const Node* node) {
 
       break;
     }
+
   }
 }
 
