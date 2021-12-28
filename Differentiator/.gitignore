@@ -12,3 +12,5 @@
 *.pdf
 *.tex
 main.c
+
+!CMakeLists.txt
