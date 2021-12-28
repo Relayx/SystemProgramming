@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 
 // ----------------------> Declarations <----------------------
 
@@ -169,7 +170,7 @@ static void PrintNode(const Node* node,
 
     case NODE_CONST: {
       size_t needed = snprintf(NULL, 0, "%lg", node->content.value);
-      char double_str[needed + 1];
+      char* double_str = alloca(needed + 1);
       sprintf(double_str, "%lg", node->content.value);
       fprintf(fout, NODE_DECRIPTION, info->index, info->shape, 
               info->color, double_str);
