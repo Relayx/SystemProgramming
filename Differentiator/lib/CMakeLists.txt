@@ -11,7 +11,7 @@ list(APPEND DIFFERENTIATOR_SOURCES utilities.c)
 
 add_library(DifferentiatorLib OBJECT)
 
-target_sources(DifferentiatorLib PUBLIC ${DIFFERENTIATOR_SOURCES})
+target_sources(DifferentiatorLib PRIVATE ${DIFFERENTIATOR_SOURCES})
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     string(REPLACE "/W3"  "/w" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
