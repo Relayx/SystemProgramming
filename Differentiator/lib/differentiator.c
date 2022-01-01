@@ -48,8 +48,8 @@ static NodeValue FunctionWrapper(TreeNodeFunction function);
 #define FUNC(func, left, right) \
   CreateNode(NODE_FUNCTION, FunctionWrapper(func), left, right)
 
-#define CONST(const) \
-  CreateNode(NODE_CONST, ConstWrapper(const), NULL, NULL)
+#define CONST(val) \
+  CreateNode(NODE_CONST, ConstWrapper(val), NULL, NULL)
 
 // ----------------------> Definitions <----------------------
 
@@ -118,7 +118,7 @@ static Node* DifferentiateOperation(const Node* node) {
     }
 
     case OP_DIV: {
-      DIV(SUB(MUL(DL, CR), MUL(CL, DR)), MUL(CR, CR)); // DANGER
+      DIV(SUB(MUL(DL, CR), MUL(CL, DR)), MUL(CR, CR));
       break;
     }
 
@@ -136,54 +136,136 @@ static Node* DifferentiateFunction(const Node* node) {
     case FUNC_SIN: {
       return
       MUL(
-            FUNC(FUNC_COS, NULL, CR), 
-            DR
-          );
+        FUNC(FUNC_COS, NULL, CR), 
+        DR
+      );
       break;
     }
 
     case FUNC_COS: {
       return
       MUL(
-            MUL(
-                  FUNC(FUNC_SIN, NULL, CR), 
-                  CONST(-1.)
-                ), 
-            DR
-          );
+        MUL(
+          FUNC(FUNC_SIN, NULL, CR), 
+          CONST(-1.)
+        ), 
+        DR
+      );
       break;
     }
 
     case FUNC_TG: {
       return
       MUL(
-            DIV(
-                  CONST(1.),
-                  EXP(
-                        FUNC(FUNC_COS, NULL, CR),
-                        CONST(2.)
-                      )
-                ),
-            DR
-          );
+        DIV(
+          CONST(1.),
+            EXP(
+              FUNC(FUNC_COS, NULL, CR),
+              CONST(2.)
+            )
+        ),
+        DR
+      );
       break;
     }
 
     case FUNC_CTG: {
       return
       MUL(
-            MUL(
-                  DIV(
-                        CONST(1.),
-                        EXP(
-                              FUNC(FUNC_SIN, NULL, CR),
-                              CONST(2.)
-                            )
-                      ),
-                  DR
-                ),
-            CONST(-1.)
-          );
+        MUL(
+          DIV(
+            CONST(1.),
+            EXP(
+              FUNC(FUNC_SIN, NULL, CR),
+              CONST(2.)
+            )
+          ),
+          CONST(-1.)
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_ARCSIN: {
+      return
+      MUL(
+        DIV(
+          CONST(1.),
+          FUNC(FUNC_SQRT, NULL,
+            SUB(
+              CONST(1.),
+              EXP(
+                CR,
+                CONST(2.)
+              )
+            )
+          )
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_ARCCOS: {
+      return
+      MUL(
+        MUL(
+          DIV(
+            CONST(1.),
+            FUNC(FUNC_SQRT, NULL,
+              SUB(
+                CONST(1.),
+                EXP(
+                  CR,
+                  CONST(2.)
+                )
+              )
+            )
+          ),
+          CONST(-1.)
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_ARCTG: {
+      return
+      MUL(
+        DIV(
+          CONST(1.),
+          ADD(
+            CONST(1.),
+            EXP(
+              CR,
+              CONST(2.)
+            )
+          )
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_ARCCTG: {
+      return
+      MUL(
+        MUL(
+          DIV(
+            CONST(1.),
+            ADD(
+              CONST(1.),
+              EXP(
+                CR,
+                CONST(2.)
+              )
+            )
+          ),
+          CONST(-1.)
+        ),
+        DR
+      );
       break;
     }
 
@@ -223,4 +305,6 @@ static NodeValue FunctionWrapper(TreeNodeFunction function) {
 #undef SUB
 #undef MUL
 #undef DIV
+#undef EXP
 #undef FUNC
+#undef CONST
