@@ -129,7 +129,6 @@ static double TreeCalculateFunction(double value,
     }
 
     case FUNC_SQRT: {
-      printf("%lg\n", value);
       return sqrt(value);
       break;
     }

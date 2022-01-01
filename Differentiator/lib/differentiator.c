@@ -51,6 +51,9 @@ static NodeValue FunctionWrapper(TreeNodeFunction function);
 #define CONST(val) \
   CreateNode(NODE_CONST, ConstWrapper(val), NULL, NULL)
 
+#define ERROR \
+  CreateNode(NODE_ERROR, ConstWrapper(0.), NULL, NULL)
+
 // ----------------------> Definitions <----------------------
 
 Tree TreeDifferentiate(const Tree* tree) {
@@ -84,7 +87,7 @@ static Node* Differentiate(const Node* node) {
 
     case NODE_ERROR:
     default: {
-
+      return ERROR;
       break;
     }
 
@@ -103,27 +106,40 @@ static Node* DifferentiateOperation(const Node* node) {
   switch (node->content.operation) {
 
     case OP_ADD: {
-      return ADD(DL, DR);
+      return 
+      ADD(DL, DR);
       break;
     }
 
     case OP_SUB: {
-      return SUB(DL, DR);
+      return
+      SUB(DL, DR);
       break;
     }
 
     case OP_MUL: {
-      return ADD(MUL(DL, CR), MUL(CL, DR));
+      return
+      ADD(
+        MUL(DL, CR), 
+        MUL(CL, DR)
+      );
       break;
     }
 
     case OP_DIV: {
-      DIV(SUB(MUL(DL, CR), MUL(CL, DR)), MUL(CR, CR));
+      return
+      DIV(
+        SUB(
+          MUL(DL, CR), 
+          MUL(CL, DR)
+        ), 
+        MUL(CR, CR)
+      );
       break;
     }
 
     default: {
-
+      return ERROR;
       break;
     }
 
@@ -269,8 +285,68 @@ static Node* DifferentiateFunction(const Node* node) {
       break;
     }
 
-    default: {
+    case FUNC_SH: {
+      return
+      MUL(
+        FUNC(FUNC_CH, NULL, CR), 
+        DR
+      );
+      break;
+    }
 
+    case FUNC_CH: {
+      return
+      MUL(
+        FUNC(FUNC_SH, NULL, CR), 
+        DR
+      );
+      break;
+    }
+
+    case FUNC_TH: {
+      return
+      MUL(
+        DIV(
+          CONST(1.),
+          EXP(
+            FUNC(FUNC_CH, NULL, CR),
+            CONST(2.)
+          )
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_LN: {
+      return
+      MUL(
+        DIV(
+          CONST(1.),
+          CR
+        ),
+        DR
+      );
+      break;
+    }
+
+    case FUNC_SQRT: {
+      return
+      MUL(
+        DIV(
+          CONST(1.),
+          MUL(
+            CONST(2.),
+            FUNC(FUNC_SQRT, NULL, CR)
+          )
+        ),
+        DR
+      );
+      break;
+    }
+
+    default: {
+      return ERROR;
       break;
     }
 
@@ -308,3 +384,4 @@ static NodeValue FunctionWrapper(TreeNodeFunction function) {
 #undef EXP
 #undef FUNC
 #undef CONST
+#undef ERROR
