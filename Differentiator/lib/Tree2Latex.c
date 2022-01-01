@@ -110,7 +110,7 @@ static char* FormatString(const char* format, ...) {
   va_list args;
   va_start(args, format);
   size_t needed = vsnprintf(NULL, 0, format, args);
-  char *buffer = malloc(needed + 1);
+  char *buffer = (char*) calloc(needed + 1, sizeof(char));
   vsprintf(buffer, format, args);
   va_end(args);
   return buffer;

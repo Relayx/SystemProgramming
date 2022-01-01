@@ -9,9 +9,9 @@
 static double TreeCalculateFunction(double value, 
                                     TreeNodeFunction function);
 
-static double TreeCalculateOperation(double left, 
-                                     double right, 
-                                     TreeNodeType operation);
+static double TreeCalculateOperation(double left,
+                                     double right,
+                                     TreeNodeOperation operation);
 
 static double _TreeCalculate(const Node* node);
 
@@ -149,9 +149,9 @@ static double TreeCalculateFunction(double value,
 
 ///////////////////////////////////////////////////////////////
 
-static double TreeCalculateOperation(double left, 
-                                     double right, 
-                                     TreeNodeType operation
+static double TreeCalculateOperation(double left,
+                                     double right,
+                                     TreeNodeOperation operation
 ) {
   switch (operation) {
 
