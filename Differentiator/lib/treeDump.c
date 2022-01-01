@@ -12,24 +12,22 @@ typedef struct NodeInfo_ {
   int         index;
 } NodeInfo;
 
-static const char* GRAPH_SETTINGS = " \
-  digraph Tree{ \n\
-  node [colorscheme=set312] \n\
-  edge [colorscheme=paired12] \n\
-  rankdir=UD \n\
-";
+static const char* GRAPH_SETTINGS =
+  "digraph Tree{ \n"
+  "node [colorscheme=set312] \n"
+  "rankdir=UD \n";
 
-static const char* NODE_DECRIPTION = " \
-  node%d [ \
-  shape=\"%s\", \
-  style=\"rounded, bold, filled\", \
-  fillcolor=%d, \
-  fontcolor=\"white\", \
-  label=\"%s\", \
-  width=0.9, \
-  height=0.9, \
-  fontname=\"Impact\" \
-  ]";
+static const char* NODE_DECRIPTION =
+  "node%d ["
+  "shape=\"%s\", "
+  "style=\"rounded, bold, filled\", "
+  "fillcolor=%d, "
+  "fontcolor=\"white\", "
+  "label=\"%s\", "
+  "width=0.9, "
+  "height=0.9, "
+  "fontname=\"Impact\" "
+  "]\n";
 
 static const char* NODE_SHAPES[] = {
   [NODE_ERROR]    = "none",

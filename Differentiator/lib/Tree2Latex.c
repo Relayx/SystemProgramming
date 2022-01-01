@@ -7,12 +7,11 @@
 
 // ----------------------> Declarations <----------------------
 
-static const char* TEX_MAIN = " \
-  \\documentclass{article} \n\
-  \\begin{document} \n\
-    $%s$ \n\
-  \\end{document} \n\
-";
+static const char* TEX_MAIN =
+  "\\documentclass{article} \n"
+  "\\begin{document} \n"
+  "$%s$ \n"
+  "\\end{document} \n";
 
 static const char* TEX_TEMPLATES[] = {
   [NODE_ERROR]  = "!ERROR!",
@@ -70,11 +69,11 @@ static char* _Tree2Latex(const Node* node) {
     }
 
     case NODE_OPERATION: {
-      char* left = _Tree2Latex(node->left);
+      char* left  = _Tree2Latex(node->left);
       char* right = _Tree2Latex(node->right);
-      char* res = FormatString(TEX_TEMPLATES[node->content.operation],
-                               left,
-                               right);
+      char* res   = FormatString(TEX_TEMPLATES[node->content.operation],
+                                 left,
+                                 right);
       free(left);
       free(right);
       return res;
