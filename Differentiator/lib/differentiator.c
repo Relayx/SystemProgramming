@@ -42,8 +42,14 @@ static NodeValue FunctionWrapper(TreeNodeFunction function);
 #define DIV(left, right) \
   CreateNode(NODE_OPERATION, OperationWrapper(OP_DIV), left, right)
 
+#define EXP(left, right) \
+  CreateNode(NODE_OPERATION, OperationWrapper(OP_EXP), left, right)
+
 #define FUNC(func, left, right) \
   CreateNode(NODE_FUNCTION, FunctionWrapper(func), left, right)
+
+#define CONST(const) \
+  CreateNode(NODE_CONST, ConstWrapper(const), NULL, NULL)
 
 // ----------------------> Definitions <----------------------
 
@@ -128,7 +134,56 @@ static Node* DifferentiateFunction(const Node* node) {
   switch (node->content.function) {
 
     case FUNC_SIN: {
-      return MUL(FUNC(FUNC_COS, NULL, CR), DR);
+      return
+      MUL(
+            FUNC(FUNC_COS, NULL, CR), 
+            DR
+          );
+      break;
+    }
+
+    case FUNC_COS: {
+      return
+      MUL(
+            MUL(
+                  FUNC(FUNC_SIN, NULL, CR), 
+                  CONST(-1.)
+                ), 
+            DR
+          );
+      break;
+    }
+
+    case FUNC_TG: {
+      return
+      MUL(
+            DIV(
+                  CONST(1.),
+                  EXP(
+                        FUNC(FUNC_COS, NULL, CR),
+                        CONST(2.)
+                      )
+                ),
+            DR
+          );
+      break;
+    }
+
+    case FUNC_CTG: {
+      return
+      MUL(
+            MUL(
+                  DIV(
+                        CONST(1.),
+                        EXP(
+                              FUNC(FUNC_SIN, NULL, CR),
+                              CONST(2.)
+                            )
+                      ),
+                  DR
+                ),
+            CONST(-1.)
+          );
       break;
     }
 
@@ -136,6 +191,7 @@ static Node* DifferentiateFunction(const Node* node) {
 
       break;
     }
+
   }
 }
 
