@@ -29,10 +29,9 @@ static const WordToken FUNCTIONS[] = {
   {"ln",     FUNC_LN},
 };
 
+static NodeValue VariableWrapper(char* variable);
 static NodeValue OperationWrapper(TreeNodeOperation operation);
-
 static NodeValue ConstWrapper(double number);
-
 static NodeValue FunctionWrapper(TreeNodeFunction function);
 
 static void SyntaxError();
@@ -44,6 +43,7 @@ static Node* GetTerm(const char** str);
 static Node* GetExponent(const char** str);
 static Node* GetPriority(const char** str);
 static Node* GenFunction(const char** str);
+static Node* GetVariable(const char** str);
 static Node* GetNumber(const char** str);
 
 // ----------------------> Definitions <----------------------
@@ -164,18 +164,42 @@ static Node* GetPriority(const char** str) {
 
 static Node* GenFunction(const char** str) {
   size_t size = sizeof(FUNCTIONS) / sizeof(FUNCTIONS[0]);
+
   for (size_t i = 0; i < size; ++i) {
     size_t token_size = strlen(FUNCTIONS[i].token);
     if (strncmp(*str, FUNCTIONS[i].token, token_size) == 0) {
       *str += token_size;
+
       Require(str, '(');
       Node* value = GetExpression(str);
       Require(str, ')');
+
       return CreateNode(NODE_FUNCTION, 
                         FunctionWrapper(FUNCTIONS[i].id),
                         NULL, 
                         value);
     }
+  }
+
+  return GetVariable(str);
+}
+
+static Node* GetVariable(const char** str) {
+  const char* start = *str;
+  size_t count = 0;
+  while ('a' <= **str && **str <= 'z' ||
+         'A' <= **str && **str <= 'Z'
+  ) {
+    ++count;
+    ++(*str);
+  }
+
+  if (count > 0) {
+    char* var_str = (char*) calloc(count + 1, sizeof(char));
+    strncpy(var_str, start, count);
+    return CreateNode(NODE_VARIABLE,
+                      VariableWrapper(var_str),
+                      NULL, NULL);
   }
 
   return GetNumber(str);
@@ -189,6 +213,12 @@ static Node* GetNumber(const char** str) {
   }
 
   return CreateNode(NODE_CONST, ConstWrapper(val), NULL, NULL);
+}
+
+static NodeValue VariableWrapper(char* variable) {
+  NodeValue value;
+  value.variable = variable;
+  return value;
 }
 
 static NodeValue OperationWrapper(TreeNodeOperation operation) {

@@ -90,7 +90,7 @@ static char* _Tree2Latex(const Node* node) {
     }
 
     case NODE_VARIABLE: {
-      return FormatString("%c", node->content.variable);
+      return FormatString("%s", node->content.variable);
       break;
     }
 

@@ -51,7 +51,7 @@ static double _TreeCalculate(const Node* node) {
     case NODE_VARIABLE: {
       // TO DO
       double value;
-      printf("Please Enter the value for %c: ", node->content.variable);
+      printf("Please Enter the value for %s: ", node->content.variable);
       scanf("%lg", &value);
       return value;
       break;

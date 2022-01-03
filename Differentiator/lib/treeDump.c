@@ -176,7 +176,7 @@ static void PrintNode(const Node* node,
 
     case NODE_VARIABLE: {
       fprintf(fout, NODE_DECRIPTION, info->index, info->shape, 
-              info->color, &node->content.variable);
+              info->color, node->content.variable);
       break;
     }
 
