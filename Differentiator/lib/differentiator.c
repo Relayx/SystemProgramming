@@ -65,7 +65,8 @@ Tree TreeDifferentiate(const Tree* tree) {
 static Node* Differentiate(const Node* node) {
   switch (node->type) {
 
-    case NODE_CONST: {
+    case NODE_CONST:
+    case NODE_MATH_CONST: {
       return DifferentiateConst(node);
       break;
     }

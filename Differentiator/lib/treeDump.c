@@ -30,15 +30,16 @@ static const char* NODE_DECRIPTION =
   "]\n";
 
 static const char* NODE_SHAPES[] = {
-  [NODE_ERROR]    = "none",
-  [NODE_CONST]    = "circle",
-  [NODE_VARIABLE] = "doublecircle",
-  [NODE_FUNCTION] = "note",
-  [OP_ADD]        = "square",
-  [OP_SUB]        = "triangle",
-  [OP_MUL]        = "hexagon",
-  [OP_DIV]        = "diamond",
-  [OP_EXP]        = "house"
+  [NODE_ERROR]      = "none",
+  [NODE_CONST]      = "circle",
+  [NODE_VARIABLE]   = "doublecircle",
+  [NODE_FUNCTION]   = "note",
+  [NODE_MATH_CONST] = "oval",
+  [OP_ADD]          = "square",
+  [OP_SUB]          = "triangle",
+  [OP_MUL]          = "hexagon",
+  [OP_DIV]          = "diamond",
+  [OP_EXP]          = "house"
 };
 
 static const char* NODE_VALUES[] = {
@@ -60,7 +61,9 @@ static const char* NODE_VALUES[] = {
   [FUNC_SQRT]   = "sqrt",
   [FUNC_SH]     = "sh",
   [FUNC_CH]     = "ch",
-  [FUNC_TH]     = "th"
+  [FUNC_TH]     = "th",
+  [CONST_PI]    = "π",
+  [CONST_E]     = "e"
 };
 
 static NodeInfo GetNodeInfo(const Node* node);
@@ -142,6 +145,13 @@ static NodeInfo GetNodeInfo(const Node* node) {
     case NODE_VARIABLE: {
         info.color = node->type;
         info.shape = NODE_SHAPES[node->type];
+      break;
+    }
+
+    case NODE_MATH_CONST: {
+      info.color = node->type;
+      info.shape = NODE_SHAPES[node->type];
+      info.value = NODE_VALUES[node->content.mconst];
       break;
     }
 

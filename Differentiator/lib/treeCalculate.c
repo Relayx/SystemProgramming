@@ -13,6 +13,8 @@ static double TreeCalculateOperation(double left,
                                      double right,
                                      TreeNodeOperation operation);
 
+static double TreeCalculateMathConst(TreeNodeMathConst mconst);
+
 static double _TreeCalculate(const Node* node);
 
 // ----------------------> Definitions <----------------------
@@ -54,6 +56,11 @@ static double _TreeCalculate(const Node* node) {
       printf("Please Enter the value for %s: ", node->content.variable);
       scanf("%lg", &value);
       return value;
+      break;
+    }
+
+    case NODE_MATH_CONST: {
+      return TreeCalculateMathConst(node->content.mconst);
       break;
     }
 
@@ -135,6 +142,27 @@ static double TreeCalculateFunction(double value,
 
     case FUNC_LN: {
       return log(value);
+      break;
+    }
+
+    default: {
+      return NAN;
+      break;
+    }
+
+  }
+}
+
+static double TreeCalculateMathConst(TreeNodeMathConst mconst) {
+  switch (mconst) {
+
+    case CONST_PI: {
+      return M_PI;
+      break;
+    }
+
+    case CONST_E: {
+      return M_E;
       break;
     }
 
