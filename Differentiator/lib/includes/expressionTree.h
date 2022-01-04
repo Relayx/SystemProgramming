@@ -41,6 +41,13 @@ typedef enum {
   FUNC_TYPES_COUNT
 } TreeNodeFunction;
 
+typedef enum {
+  CONST_NOT_SPECIAL = 0,  // 0
+  CONST_PI = FUNC_TYPES_COUNT + 1,
+  CONST_E,
+  CONST_TYPES_COUNT
+} TreeNodeMathConst;
+
 typedef union NodeValue_ {
   double            value;
   char*             variable;
@@ -67,9 +74,9 @@ double TreeCalculate(const Tree* tree);
 
 void Tree2Latex(const Tree* tree);
 
-Node* CreateNode(TreeNodeType type, 
+Node* CreateNode(TreeNodeType type,
                  NodeValue value, 
-                 Node* left, 
+                 Node* left,
                  Node* right);
 
 Node* CopySubTree(const Node* node);
