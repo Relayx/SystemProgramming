@@ -138,6 +138,23 @@ static Node* DifferentiateOperation(const Node* node) {
       break;
     }
 
+    case OP_EXP: {
+      return
+      MUL(
+        EXP(
+          CL,
+          CR
+        ),
+        Differentiate(
+          MUL(
+            FUNC(FUNC_LN, NULL, CL),
+            CR
+          )
+        )
+      );
+      break;
+    }
+
     default: {
       return ERROR;
       break;
