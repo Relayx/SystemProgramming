@@ -29,16 +29,10 @@ static const WordToken FUNCTIONS[] = {
   {"ln",     FUNC_LN},
 };
 
-static const WordToken CONSTS[] = {
-  {"pi", CONST_PI},
-  {"e",  CONST_E}
-};
-
 static NodeValue VariableWrapper(char* variable);
 static NodeValue OperationWrapper(TreeNodeOperation operation);
 static NodeValue ConstWrapper(double number);
 static NodeValue FunctionWrapper(TreeNodeFunction function);
-static NodeValue MathConstWrapper(TreeNodeMathConst mconst);
 
 static void SyntaxError();
 static void Require(const char** str, char c);
@@ -48,8 +42,7 @@ static Node* GetExpression(const char** str);
 static Node* GetTerm(const char** str);
 static Node* GetExponent(const char** str);
 static Node* GetPriority(const char** str);
-static Node* GetFunction(const char** str);
-static Node* GetMathConst(const char** str);
+static Node* GenFunction(const char** str);
 static Node* GetVariable(const char** str);
 static Node* GetNumber(const char** str);
 
@@ -166,10 +159,10 @@ static Node* GetPriority(const char** str) {
     Require(str, ')');
     return value;
   }
-  return GetFunction(str);
+  return GenFunction(str);
 }
 
-static Node* GetFunction(const char** str) {
+static Node* GenFunction(const char** str) {
   size_t size = sizeof(FUNCTIONS) / sizeof(FUNCTIONS[0]);
 
   for (size_t i = 0; i < size; ++i) {
@@ -185,24 +178,6 @@ static Node* GetFunction(const char** str) {
                         FunctionWrapper(FUNCTIONS[i].id),
                         NULL, 
                         value);
-    }
-  }
-
-  return GetMathConst(str);
-}
-
-static Node* GetMathConst(const char** str) {
-  size_t size = sizeof(CONSTS) / sizeof(CONSTS[0]);
-
-  for (size_t i = 0; i < size; ++i) {
-    size_t token_size = strlen(CONSTS[i].token);
-    if (strncmp(*str, CONSTS[i].token, token_size) == 0) {
-      *str += token_size;
-
-      return CreateNode(NODE_MATH_CONST, 
-                        MathConstWrapper(CONSTS[i].id),
-                        NULL,
-                        NULL);
     }
   }
 
@@ -261,11 +236,5 @@ static NodeValue ConstWrapper(double number) {
 static NodeValue FunctionWrapper(TreeNodeFunction function) {
   NodeValue value;
   value.function = function;
-  return value;
-}
-
-static NodeValue MathConstWrapper(TreeNodeMathConst mconst) {
-  NodeValue value;
-  value.mconst = mconst;
   return value;
 }

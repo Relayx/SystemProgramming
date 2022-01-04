@@ -5,13 +5,12 @@ struct Node_;
 typedef struct Node_ Node;
 
 typedef enum {
-  NODE_ERROR = 0,  // 0
-  NODE_CONST,      // 1
-  NODE_OPERATION,  // 2
-  NODE_VARIABLE,   // 3
-  NODE_FUNCTION,   // 4
-  NODE_MATH_CONST, // 5
-  NODE_TYPES_COUNT // 6
+  NODE_ERROR = 0,     // 0
+  NODE_CONST,         // 1
+  NODE_OPERATION,     // 2
+  NODE_VARIABLE,      // 3
+  NODE_FUNCTION,      // 4
+  NODE_TYPES_COUNT    // 5
 } TreeNodeType;
 
 typedef enum {
@@ -42,19 +41,11 @@ typedef enum {
   FUNC_TYPES_COUNT
 } TreeNodeFunction;
 
-typedef enum {
-  CONST_ERROR = 0,
-  CONST_PI    = FUNC_TYPES_COUNT + 1,
-  CONST_E,
-  CONST_TYPES_COUNT
-} TreeNodeMathConst;
-
 typedef union NodeValue_ {
   double            value;
   char*             variable;
   TreeNodeOperation operation;
   TreeNodeFunction  function;
-  TreeNodeMathConst mconst;
 } NodeValue;
 
 struct Node_ {

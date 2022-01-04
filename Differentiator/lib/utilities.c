@@ -25,8 +25,6 @@ Node* CreateNode(TreeNodeType type,
 Node* CopySubTree(const Node* node) {
   if (node == NULL) return NULL;
 
-  // DANGER ZONE!!!!
-  // CONTENT FROM VARIABLE WILL NOT BE COPIED
   return CreateNode(node->type,
                     node->content,
                     CopySubTree(node->left),

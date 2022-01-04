@@ -32,9 +32,7 @@ static const char* TEX_TEMPLATES[] = {
   [FUNC_SH]     = "sh(%s)",
   [FUNC_CH]     = "ch(%s)",
   [FUNC_TH]     = "th(%s)",
-  [FUNC_SQRT]   = "\\sqrt{%s}",
-  [CONST_PI]    = "\\pi",
-  [CONST_E]     = "e"
+  [FUNC_SQRT]   = "\\sqrt{%s}"
 };
 
 static char* _Tree2Latex(const Node* node);
@@ -93,11 +91,6 @@ static char* _Tree2Latex(const Node* node) {
 
     case NODE_VARIABLE: {
       return FormatString("%s", node->content.variable);
-      break;
-    }
-
-    case NODE_MATH_CONST: {
-      return FormatString("%s", TEX_TEMPLATES[node->content.mconst]);
       break;
     }
 
