@@ -1,5 +1,7 @@
 #include "includes/expressionTree.h"
 
+#include "includes/service.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +34,9 @@ static const char* TEX_TEMPLATES[] = {
   [FUNC_SH]     = "sh(%s)",
   [FUNC_CH]     = "ch(%s)",
   [FUNC_TH]     = "th(%s)",
-  [FUNC_SQRT]   = "\\sqrt{%s}"
+  [FUNC_SQRT]   = "\\sqrt{%s}",
+  [CONST_PI]    = "\\pi",
+  [CONST_E]     = "e"
 };
 
 static char* _Tree2Latex(const Node* node);
@@ -64,6 +68,10 @@ static char* _Tree2Latex(const Node* node) {
   switch (node->type) {
 
     case NODE_CONST: {
+      TreeNodeMathConst mconst = SpecialConstTransform(node->content.value);
+      if (mconst != CONST_NOT_SPECIAL) {
+        return FormatString("%s", TEX_TEMPLATES[mconst]);
+      }
       return FormatString("%lg", node->content.value);
       break;
     }

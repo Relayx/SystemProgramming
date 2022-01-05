@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <malloc.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -29,6 +30,16 @@ static const WordToken FUNCTIONS[] = {
   {"ln",     FUNC_LN},
 };
 
+static const WordToken CONSTS[] = {
+  {"pi", CONST_PI},
+  {"e", CONST_E}
+};
+
+static const double CONSTS_DEF[] = {
+  [CONST_PI] = M_PI,
+  [CONST_E] = M_E
+};
+
 static NodeValue VariableWrapper(char* variable);
 static NodeValue OperationWrapper(TreeNodeOperation operation);
 static NodeValue ConstWrapper(double number);
@@ -43,6 +54,7 @@ static Node* GetTerm(const char** str);
 static Node* GetExponent(const char** str);
 static Node* GetPriority(const char** str);
 static Node* GenFunction(const char** str);
+static Node* GetMathConst(const char** str);
 static Node* GetVariable(const char** str);
 static Node* GetNumber(const char** str);
 
@@ -181,6 +193,24 @@ static Node* GenFunction(const char** str) {
     }
   }
 
+  return GetMathConst(str);
+}
+
+static Node* GetMathConst(const char** str) {
+  size_t size = sizeof(CONSTS) / sizeof(CONSTS[0]);
+
+  for (size_t i = 0; i < size; ++i) {
+    size_t token_size = strlen(CONSTS[i].token);
+    if (strncmp(*str, CONSTS[i].token, token_size) == 0) {
+      *str += token_size;
+
+      return CreateNode(NODE_CONST, 
+                        ConstWrapper(CONSTS_DEF[CONSTS[i].id]),
+                        NULL, 
+                        NULL);
+    }
+  }
+
   return GetVariable(str);
 }
 
@@ -206,13 +236,38 @@ static Node* GetVariable(const char** str) {
 }
 
 static Node* GetNumber(const char** str) {
+  double sign = 1;
+  if (**str == '-') {
+    sign = -1;
+    ++(*str);
+  }
+
+  const char* last = *str;
+  
   double val = 0;
   while('0' <= **str && **str <= '9') {
     val = val * 10 + (**str - '0');
     ++(*str);
   }
 
-  return CreateNode(NODE_CONST, ConstWrapper(val), NULL, NULL);
+  if (**str == '.') {
+    ++(*str);
+
+    double frac = 0;
+    double digit = 1;
+
+    while('0' <= **str && **str <= '9') {
+    frac = frac * 10 + (**str - '0');
+    digit *= 10;
+    ++(*str);
+    }
+
+    val += frac / digit;
+  }
+
+  if (last == *str) SyntaxError();
+
+  return CreateNode(NODE_CONST, ConstWrapper(val * sign), NULL, NULL);
 }
 
 static NodeValue VariableWrapper(char* variable) {

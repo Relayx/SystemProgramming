@@ -1,5 +1,7 @@
 #include "includes/expressionTree.h"
 
+#include "includes/service.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,7 +11,7 @@ typedef struct NodeInfo_ {
   const char* shape;
   const char* value;
   int         color;
-  int         index;
+  size_t      index;
 } NodeInfo;
 
 static const char* GRAPH_SETTINGS =
@@ -18,7 +20,7 @@ static const char* GRAPH_SETTINGS =
   "rankdir=UD \n";
 
 static const char* NODE_DECRIPTION =
-  "node%d ["
+  "node%zu ["
   "shape=\"%s\", "
   "style=\"rounded, bold, filled\", "
   "fillcolor=%d, "
@@ -60,7 +62,9 @@ static const char* NODE_VALUES[] = {
   [FUNC_SQRT]   = "sqrt",
   [FUNC_SH]     = "sh",
   [FUNC_CH]     = "ch",
-  [FUNC_TH]     = "th"
+  [FUNC_TH]     = "th",
+  [CONST_PI] = "π",
+  [CONST_E] = "e"
 };
 
 static NodeInfo GetNodeInfo(const Node* node);
@@ -71,7 +75,7 @@ static void PrintNode(const Node* node,
 
 static size_t _TreeDump(const Node* node, 
                         FILE* fout, 
-                        size_t index);
+                        size_t* index);
 
 // ----------------------> Definitions <----------------------
 
@@ -83,7 +87,9 @@ void TreeDump(const Tree* tree) {
 
   fprintf(fout, GRAPH_SETTINGS);
 
-  _TreeDump(tree->root, fout, 1);
+  size_t index = 0;
+
+  _TreeDump(tree->root, fout, &index);
 
   fprintf(fout, "}\n");
   fclose(fout);
@@ -98,23 +104,27 @@ void TreeDump(const Tree* tree) {
 
 static size_t _TreeDump(const Node* node, 
                         FILE* fout, 
-                        size_t index
+                        size_t* index
 ) {
   NodeInfo info = GetNodeInfo(node);
-  info.index = index;
+  info.index = *index;
+
+  size_t saved_index = *index;
 
   PrintNode(node, fout, &info);
 
   if (node->left != NULL) {
-    size_t next_index = _TreeDump(node->left, fout, 2 * index);
-    fprintf(fout, "node%d -> node%d\n", index, next_index);
+    ++(*index);
+    size_t next_index = _TreeDump(node->left, fout, index);
+    fprintf(fout, "node%zu -> node%zu\n", saved_index, next_index);
   }
   if (node->right != NULL) {
-    size_t next_index = _TreeDump(node->right, fout, 2 * index + 1);
-    fprintf(fout, "node%d -> node%d\n", index, next_index);
+    ++(*index);
+    size_t next_index = _TreeDump(node->right, fout, index);
+    fprintf(fout, "node%zu -> node%zu\n", saved_index, next_index);
   }
 
-  return index;
+  return saved_index;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -166,11 +176,18 @@ static void PrintNode(const Node* node,
   switch (node->type) {
 
     case NODE_CONST: {
-      size_t needed = snprintf(NULL, 0, "%lg", node->content.value);
-      char* double_str = (char*) calloc(needed + 1, sizeof(char));
-      sprintf(double_str, "%lg", node->content.value);
-      fprintf(fout, NODE_DECRIPTION, info->index, info->shape, 
-              info->color, double_str);
+      TreeNodeMathConst mconst = SpecialConstTransform(node->content.value);
+      if (mconst != CONST_NOT_SPECIAL) {
+        const int kMconstColor = 5;
+        fprintf(fout, NODE_DECRIPTION, info->index, info->shape,
+                kMconstColor, NODE_VALUES[mconst]);
+      } else {
+        size_t needed = snprintf(NULL, 0, "%lg", node->content.value);
+        char* double_str = (char*) calloc(needed + 1, sizeof(char));
+        sprintf(double_str, "%lg", node->content.value);
+        fprintf(fout, NODE_DECRIPTION, info->index, info->shape, 
+                info->color, double_str);
+      }
       break;
     }
 
