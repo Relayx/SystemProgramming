@@ -1,6 +1,8 @@
 #ifndef LIB_RELAYX_EXPRESSION_TREE_HEADER
 #define LIB_RELAYX_EXPRESSION_TREE_HEADER
 
+#include <stdlib.h>
+
 struct Node_;
 typedef struct Node_ Node;
 
@@ -87,6 +89,6 @@ Tree TreeDifferentiate(const Tree* tree);
 
 Tree TreeParse(const char* fileName);
 
-int TreeOptimize(Tree* tree);
+size_t TreeOptimize(Tree* tree);
 
 #endif
