@@ -42,7 +42,7 @@ typedef enum {
 } TreeNodeFunction;
 
 typedef enum {
-  CONST_NOT_SPECIAL = 0,  // 0
+  CONST_NOT_SPECIAL = 0,
   CONST_PI = FUNC_TYPES_COUNT + 1,
   CONST_E,
   CONST_TYPES_COUNT
@@ -81,8 +81,12 @@ Node* CreateNode(TreeNodeType type,
 
 Node* CopySubTree(const Node* node);
 
+void DeleteSubTree(Node* node);
+
 Tree TreeDifferentiate(const Tree* tree);
 
 Tree TreeParse(const char* fileName);
+
+int TreeOptimize(Tree* tree);
 
 #endif

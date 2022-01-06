@@ -35,6 +35,17 @@ Node* CopySubTree(const Node* node) {
                     CopySubTree(node->right));
 }
 
+void DeleteSubTree(Node* node) {
+  if (node == NULL) {
+    return;
+  }
+
+  DeleteSubTree(node->left);
+  DeleteSubTree(node->right);
+
+  free(node);
+}
+
 TreeNodeMathConst SpecialConstTransform(double number) {
   if (CheckEpsilon(number, M_PI)) {
     return CONST_PI;
