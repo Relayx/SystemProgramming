@@ -1,4 +1,5 @@
 #include "includes/expressionTree.h"
+#include "includes/service.h"
 
 #include <assert.h>
 #include <malloc.h>
@@ -39,11 +40,6 @@ static const double CONSTS_DEF[] = {
   [CONST_PI] = M_PI,
   [CONST_E] = M_E
 };
-
-static NodeValue VariableWrapper(char* variable);
-static NodeValue OperationWrapper(TreeNodeOperation operation);
-static NodeValue ConstWrapper(double number);
-static NodeValue FunctionWrapper(TreeNodeFunction function);
 
 static void SyntaxError();
 static void Require(const char** str, char c);
@@ -268,28 +264,4 @@ static Node* GetNumber(const char** str) {
   if (last == *str) SyntaxError();
 
   return CreateNode(NODE_CONST, ConstWrapper(val * sign), NULL, NULL);
-}
-
-static NodeValue VariableWrapper(char* variable) {
-  NodeValue value;
-  value.variable = variable;
-  return value;
-}
-
-static NodeValue OperationWrapper(TreeNodeOperation operation) {
-  NodeValue value;
-  value.operation = operation;
-  return value;
-}
-
-static NodeValue ConstWrapper(double number) {
-  NodeValue value;
-  value.value = number;
-  return value;
-}
-
-static NodeValue FunctionWrapper(TreeNodeFunction function) {
-  NodeValue value;
-  value.function = function;
-  return value;
 }

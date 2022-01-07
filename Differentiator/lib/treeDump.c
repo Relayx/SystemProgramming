@@ -1,6 +1,6 @@
 #include "includes/expressionTree.h"
-
 #include "includes/service.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -94,9 +94,12 @@ void TreeDump(const Tree* tree) {
   fprintf(fout, "}\n");
   fclose(fout);
 
-  system("R:\\Programming\\C\\SystemProgramming\\Differentiator\\Graphviz\\bin\\dot.exe expression.txt -Tpng -o test.png");
+  char* command = FormatString("%s %s", GRAPHVIZ_PATH, 
+                                        "expression.txt -Tpng -o test.png");
+  system(command);
   system("start .\\test.png");
 
+  free(command);
   return;
 }
 

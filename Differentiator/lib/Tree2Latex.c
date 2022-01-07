@@ -1,8 +1,6 @@
 #include "includes/expressionTree.h"
-
 #include "includes/service.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -40,8 +38,6 @@ static const char* TEX_TEMPLATES[] = {
 };
 
 static char* _Tree2Latex(const Node* node);
-
-static char* FormatString(const char* format, ...);
 
 // ----------------------> Definitions <----------------------
 
@@ -109,16 +105,4 @@ static char* _Tree2Latex(const Node* node) {
     }
 
   }
-}
-
-///////////////////////////////////////////////////////////////
-
-static char* FormatString(const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  size_t needed = vsnprintf(NULL, 0, format, args);
-  char *buffer = (char*) calloc(needed + 1, sizeof(char));
-  vsprintf(buffer, format, args);
-  va_end(args);
-  return buffer;
 }

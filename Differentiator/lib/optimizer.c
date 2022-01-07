@@ -138,7 +138,7 @@ static size_t UnitConvolution(Node* node) {
       return 1;
     }
   }
-  
+
   if (ISOP(OP_DIV, node)) {
     if (IS1(node->right)) {
       DeleteSubTree(node->right);
@@ -169,7 +169,7 @@ static size_t CalculateConvolution(Node* node) {
   if ((node->type        == NODE_OPERATION   &&
        node->left->type  == NODE_CONST       &&
        node->right->type == NODE_CONST)
-      
+
       ||
 
       (node->type        == NODE_FUNCTION    &&

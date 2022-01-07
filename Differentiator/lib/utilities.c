@@ -3,6 +3,8 @@
 
 #include <malloc.h>
 #include <math.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 // ----------------------> Declarations <----------------------
 
@@ -46,6 +48,15 @@ void DeleteSubTree(Node* node) {
   free(node);
 }
 
+static int CheckEpsilon(double number, double local) {
+  if (fabs(local - number) < EPSILON) {
+    return 1;
+  }
+  return 0;
+}
+
+// ----------------------> Service <----------------------
+
 TreeNodeMathConst SpecialConstTransform(double number) {
   if (CheckEpsilon(number, M_PI)) {
     return CONST_PI;
@@ -56,9 +67,36 @@ TreeNodeMathConst SpecialConstTransform(double number) {
   return CONST_NOT_SPECIAL;
 }
 
-static int CheckEpsilon(double number, double local) {
-  if (fabs(local - number) < EPSILON) {
-    return 1;
-  }
-  return 0;
+char* FormatString(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  size_t needed = vsnprintf(NULL, 0, format, args);
+  char *buffer = (char*) calloc(needed + 1, sizeof(char));
+  vsprintf(buffer, format, args);
+  va_end(args);
+  return buffer;
+}
+
+NodeValue VariableWrapper(char* variable) {
+  NodeValue value;
+  value.variable = variable;
+  return value;
+}
+
+NodeValue OperationWrapper(TreeNodeOperation operation) {
+  NodeValue value;
+  value.operation = operation;
+  return value;
+}
+
+NodeValue ConstWrapper(double number) {
+  NodeValue value;
+  value.value = number;
+  return value;
+}
+
+NodeValue FunctionWrapper(TreeNodeFunction function) {
+  NodeValue value;
+  value.function = function;
+  return value;
 }

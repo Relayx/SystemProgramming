@@ -1,4 +1,5 @@
 #include "includes/expressionTree.h"
+#include "includes/service.h"
 
 #include <stdlib.h>
 
@@ -13,12 +14,6 @@ static Node* DifferentiateVariable(const Node* node);
 static Node* DifferentiateOperation(const Node* node);
 
 static Node* DifferentiateFunction(const Node* node);
-
-static NodeValue OperationWrapper(TreeNodeOperation operation);
-
-static NodeValue ConstWrapper(double number);
-
-static NodeValue FunctionWrapper(TreeNodeFunction function);
 
 // ----------------------> Aliases <----------------------
 
@@ -368,24 +363,6 @@ static Node* DifferentiateFunction(const Node* node) {
     }
 
   }
-}
-
-static NodeValue OperationWrapper(TreeNodeOperation operation) {
-  NodeValue value;
-  value.operation = operation;
-  return value;
-}
-
-static NodeValue ConstWrapper(double number) {
-  NodeValue value;
-  value.value = number;
-  return value;
-}
-
-static NodeValue FunctionWrapper(TreeNodeFunction function) {
-  NodeValue value;
-  value.function = function;
-  return value;
 }
 
 // ----------------------> Clear <----------------------
